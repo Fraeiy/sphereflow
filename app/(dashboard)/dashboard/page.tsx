@@ -19,7 +19,8 @@ import { useTreasury } from "@/hooks/use-treasury";
 import { generateSpendingReport } from "@/services/reports";
 
 export default function DashboardPage() {
-  const { snapshot, policy, payments, activities, isLoading } = useTreasury();
+  const { snapshot, policy, payments, activities, isLoading, isLive, connection } =
+    useTreasury();
 
   if (isLoading || !snapshot || !policy) {
     return (
@@ -42,7 +43,9 @@ export default function DashboardPage() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
           <p className="text-sm text-muted-foreground">
-            Treasury overview and agent health
+            {isLive && connection
+              ? "Live testnet treasury — real UCT balance from Sphere"
+              : "Treasury overview and agent health"}
           </p>
         </div>
         <Badge

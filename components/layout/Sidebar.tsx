@@ -28,10 +28,11 @@ const iconMap = {
 
 interface SidebarProps {
   identity: WalletIdentity | null;
+  isLive?: boolean;
   onDisconnect?: () => void;
 }
 
-export function Sidebar({ identity, onDisconnect }: SidebarProps) {
+export function Sidebar({ identity, isLive, onDisconnect }: SidebarProps) {
   const pathname = usePathname();
 
   return (
@@ -77,8 +78,8 @@ export function Sidebar({ identity, onDisconnect }: SidebarProps) {
               <p className="mt-1 truncate text-sm font-medium">
                 {identity.nametag ?? truncateAddress(identity.chainPubkey, 8)}
               </p>
-              <Badge variant="success" className="mt-2">
-                Sphere testnet2
+              <Badge variant={isLive ? "success" : "warning"} className="mt-2">
+                {isLive ? "Live · testnet2" : "Identity cached"}
               </Badge>
             </div>
             {onDisconnect && (

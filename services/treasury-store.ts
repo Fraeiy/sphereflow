@@ -108,10 +108,13 @@ export function clearChatHistory(userId: string): void {
 }
 
 export function getRecurringPayments(userId: string): RecurringPayment[] {
-  return readJSON<RecurringPayment[]>(
+  const stored = readJSON<RecurringPayment[]>(
     storageKey(userId, "recurring"),
-    getSeedRecurring()
+    []
   );
+  if (stored.length > 0) return stored;
+  if (userId === "demo-user") return getSeedRecurring();
+  return [];
 }
 
 export function saveRecurringPayments(
@@ -210,7 +213,63 @@ function getSeedRecurring(): RecurringPayment[] {
   ];
 }
 
+export function syncHistoryToPayments(
+  userId: string,
+  history: {
+    id?: string;
+    transferId?: string;
+    amount?: string;
+    recipient?: string;
+    to?: string;
+    memo?: string;
+    status?: string;
+    timestamp?: number | string;
+    direction?: string;
+  }[]
+): void {
+  if (!history.length) return;
+
+  const existing = getPayments(userId);
+  const existingIds = new Set(
+    existing.map((p) => p.transferId).filter(Boolean)
+  );
+
+  const newPayments: Payment[] = [];
+
+  for (const entry of history) {
+    const transferId = entry.transferId ?? entry.id;
+    if (transferId && existingIds.has(transferId)) continue;
+
+    const rawAmount = entry.amount ? BigInt(entry.amount) : BigInt(0);
+    const amount = Number(rawAmount) / 1_000_000;
+
+    const ts =
+      typeof entry.timestamp === "number"
+        ? new Date(entry.timestamp).toISOString()
+        : entry.timestamp ?? new Date().toISOString();
+
+    newPayments.push({
+      id: generateId(),
+      userId,
+      type: "instant",
+      recipient: entry.recipient ?? entry.to ?? "unknown",
+      amount: amount > 0 ? amount : 0,
+      status: entry.status === "failed" ? "failed" : "completed",
+      category: "Operations",
+      memo: entry.memo,
+      executedAt: ts,
+      createdAt: ts,
+      transferId,
+    });
+  }
+
+  if (newPayments.length > 0) {
+    writeJSON(storageKey(userId, "payments"), [...newPayments, ...existing]);
+  }
+}
+
 export function seedDemoData(userId: string, balance: number): void {
+  if (userId !== "demo-user") return;
   if (getPayments(userId).length > 0) return;
 
   const now = Date.now();

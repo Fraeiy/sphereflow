@@ -13,15 +13,16 @@ import { willAutoConnect } from "@/sphere/client";
 import { toast } from "sonner";
 
 export default function LoginPage() {
-  const { connect, isConnecting, identity } = useTreasury();
+  const { connect, isConnecting, identity, isLive, enterDemoMode } =
+    useTreasury();
   const [autoConnecting, setAutoConnecting] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
-    if (identity) {
+    if (isLive && identity) {
       router.push("/dashboard");
     }
-  }, [identity, router]);
+  }, [identity, isLive, router]);
 
   useEffect(() => {
     async function tryAutoConnect() {
@@ -53,6 +54,7 @@ export default function LoginPage() {
   };
 
   const handleDemo = () => {
+    enterDemoMode();
     router.push("/dashboard");
   };
 
