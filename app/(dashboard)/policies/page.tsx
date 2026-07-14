@@ -6,14 +6,15 @@ import { PolicyCard } from "@/components/treasury/PolicyCard";
 import { RuleEditor } from "@/components/treasury/RuleEditor";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { PageHeader } from "@/components/layout/PageHeader";
 import { useTreasury } from "@/hooks/use-treasury";
 import {
   addPolicyHistory,
   getPolicyHistory,
-  savePolicy,
 } from "@/services/treasury-store";
 import type { TreasuryPolicy } from "@/types/treasury";
 import { formatDistanceToNow } from "date-fns";
+import { AlertTriangle } from "lucide-react";
 
 export default function PoliciesPage() {
   const { policy, updatePolicy, userId, isLoading } = useTreasury();
@@ -22,8 +23,8 @@ export default function PoliciesPage() {
 
   if (isLoading || !policy) {
     return (
-      <div className="space-y-6 p-6">
-        <Skeleton className="h-8 w-48" />
+      <div className="space-y-6">
+        <Skeleton className="h-20 w-full" />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 6 }).map((_, i) => (
             <Skeleton key={i} className="h-36" />
@@ -112,22 +113,22 @@ export default function PoliciesPage() {
   ];
 
   return (
-    <div className="space-y-8 p-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">
-            Treasury Policies
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            AI-generated rules, editable and enforced by the policy engine
-          </p>
-        </div>
-        <Badge variant="secondary">v{policy.version}</Badge>
-      </div>
+    <div className="space-y-8">
+      <PageHeader
+        title="Policies"
+        description="AI-generated rules, editable and enforced by the policy engine"
+      >
+        <Badge variant="secondary" className="font-mono text-xs">
+          v{policy.version}
+        </Badge>
+      </PageHeader>
 
       {policy.emergencyFreeze && (
-        <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400">
-          Emergency freeze is active. All outgoing payments are blocked.
+        <div className="flex items-center gap-3 rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-3">
+          <AlertTriangle className="h-4 w-4 shrink-0 text-red-400" />
+          <p className="text-sm text-red-400">
+            Emergency freeze active — all outgoing payments blocked.
+          </p>
         </div>
       )}
 
@@ -149,27 +150,32 @@ export default function PoliciesPage() {
       </div>
 
       <div>
-        <h2 className="mb-4 text-lg font-semibold">Policy History</h2>
+        <p className="section-label mb-4">Audit Trail</p>
         {history.length === 0 ? (
-          <p className="text-sm text-muted-foreground">
-            No policy changes recorded yet.
-          </p>
+          <div className="depth-panel rounded-2xl px-4 py-8 text-center">
+            <p className="text-sm text-muted-foreground">
+              No policy changes recorded yet.
+            </p>
+          </div>
         ) : (
           <div className="space-y-2">
             {history.slice(0, 10).map((entry) => (
               <div
                 key={entry.id}
-                className="flex items-center justify-between rounded-lg border border-border px-4 py-3 text-sm"
+                className="depth-panel flex items-center justify-between rounded-xl px-4 py-3 text-sm"
               >
-                <div>
-                  <Badge variant={entry.source === "ai" ? "default" : "secondary"}>
+                <div className="flex items-center gap-2">
+                  <Badge
+                    variant={entry.source === "ai" ? "default" : "secondary"}
+                    className="font-mono text-[10px] uppercase"
+                  >
                     {entry.source}
                   </Badge>
-                  <span className="ml-2 text-muted-foreground">
+                  <span className="text-muted-foreground">
                     {Object.keys(entry.changes).join(", ")} updated
                   </span>
                 </div>
-                <time className="text-xs text-muted-foreground">
+                <time className="font-mono text-xs text-muted-foreground">
                   {formatDistanceToNow(new Date(entry.timestamp), {
                     addSuffix: true,
                   })}

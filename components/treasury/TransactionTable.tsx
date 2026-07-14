@@ -1,6 +1,7 @@
 "use client";
 
 import { formatDistanceToNow } from "date-fns";
+import { ArrowLeftRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn, formatUCT, truncateAddress } from "@/lib/utils";
 import type { Payment, PaymentStatus } from "@/types/treasury";
@@ -32,60 +33,59 @@ export function TransactionTable({
 }: TransactionTableProps) {
   if (transactions.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border py-16 text-center">
-        <p className="text-sm text-muted-foreground">{emptyMessage}</p>
+      <div className="depth-panel flex flex-col items-center justify-center rounded-2xl py-16 text-center">
+        <div className="rounded-xl border border-white/[0.06] bg-white/[0.03] p-3">
+          <ArrowLeftRight className="h-5 w-5 text-muted-foreground" />
+        </div>
+        <p className="mt-4 text-sm font-medium text-foreground/80">
+          No transactions
+        </p>
+        <p className="mt-1 max-w-xs text-xs text-muted-foreground">
+          {emptyMessage}
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="overflow-hidden rounded-xl border border-border">
+    <div className="data-table overflow-x-auto">
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b border-border bg-muted/5">
-            <th className="px-4 py-3 text-left font-medium text-muted-foreground">
-              Recipient
-            </th>
-            <th className="px-4 py-3 text-left font-medium text-muted-foreground">
-              Amount
-            </th>
-            <th className="px-4 py-3 text-left font-medium text-muted-foreground">
-              Type
-            </th>
-            <th className="px-4 py-3 text-left font-medium text-muted-foreground">
-              Status
-            </th>
-            <th className="px-4 py-3 text-left font-medium text-muted-foreground">
-              Time
-            </th>
+          <tr>
+            <th>Recipient</th>
+            <th>Amount</th>
+            <th>Type</th>
+            <th>Status</th>
+            <th>Time</th>
           </tr>
         </thead>
         <tbody>
           {transactions.map((tx) => (
             <tr
               key={tx.id}
-              className={cn(
-                "border-b border-border/50 transition-colors last:border-0",
-                onSelect && "cursor-pointer hover:bg-muted/5"
-              )}
+              className={cn(onSelect && "cursor-pointer")}
               onClick={() => onSelect?.(tx)}
             >
-              <td className="px-4 py-3">
+              <td>
                 <div>
-                  <p className="font-medium">{truncateAddress(tx.recipient, 8)}</p>
+                  <p className="font-mono text-sm font-medium">
+                    {truncateAddress(tx.recipient, 8)}
+                  </p>
                   {tx.memo && (
-                    <p className="text-xs text-muted-foreground">{tx.memo}</p>
+                    <p className="mt-0.5 text-xs text-muted-foreground">
+                      {tx.memo}
+                    </p>
                   )}
                 </div>
               </td>
-              <td className="px-4 py-3 font-medium">{formatUCT(tx.amount)}</td>
-              <td className="px-4 py-3 capitalize text-muted-foreground">
-                {tx.type}
+              <td className="font-mono font-medium tabular-nums">
+                {formatUCT(tx.amount)}
               </td>
-              <td className="px-4 py-3">
+              <td className="capitalize text-muted-foreground">{tx.type}</td>
+              <td>
                 <Badge variant={statusVariant[tx.status]}>{tx.status}</Badge>
               </td>
-              <td className="px-4 py-3 text-muted-foreground">
+              <td className="font-mono text-xs text-muted-foreground">
                 {formatDistanceToNow(
                   new Date(tx.executedAt ?? tx.createdAt),
                   { addSuffix: true }

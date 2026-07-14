@@ -1,8 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { TrendingDown, TrendingUp } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { DepthCard } from "@/components/ui/depth-card";
 import { cn } from "@/lib/utils";
 
 interface AnalyticsCardProps {
@@ -23,39 +22,35 @@ export function AnalyticsCard({
   const isPositive = change !== undefined && change >= 0;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.98 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.3 }}
-    >
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium text-muted-foreground">
-            {title}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-3xl font-semibold tracking-tight">{metric}</p>
-          {change !== undefined && (
-            <div
-              className={cn(
-                "mt-2 flex items-center gap-1 text-xs font-medium",
-                isPositive ? "text-emerald-400" : "text-red-400"
-              )}
-            >
-              {isPositive ? (
-                <TrendingUp className="h-3 w-3" />
-              ) : (
-                <TrendingDown className="h-3 w-3" />
-              )}
-              {Math.abs(change)}% vs {period}
-            </div>
-          )}
-          {description && (
-            <p className="mt-2 text-xs text-muted-foreground">{description}</p>
-          )}
-        </CardContent>
-      </Card>
-    </motion.div>
+    <DepthCard tilt className="h-full" innerClassName="h-full">
+      <div className="flex h-full flex-col p-5">
+        <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-muted-foreground">
+          {title}
+        </p>
+        <p className="mt-auto pt-4 font-mono text-2xl font-medium tabular-nums tracking-tight">
+          {metric}
+        </p>
+        {change !== undefined && (
+          <div
+            className={cn(
+              "mt-2 flex items-center gap-1 font-mono text-xs font-medium",
+              isPositive ? "text-emerald-400" : "text-red-400"
+            )}
+          >
+            {isPositive ? (
+              <TrendingUp className="h-3 w-3" />
+            ) : (
+              <TrendingDown className="h-3 w-3" />
+            )}
+            {Math.abs(change)}% vs {period}
+          </div>
+        )}
+        {description && (
+          <p className="mt-2 font-mono text-xs text-muted-foreground">
+            {description}
+          </p>
+        )}
+      </div>
+    </DepthCard>
   );
 }

@@ -127,15 +127,20 @@ export default function DashboardPage() {
           data={weeklyReport.trend}
         />
         <div className="space-y-4">
-          <h2 className="text-lg font-semibold">Recent Agent Actions</h2>
+          <p className="section-label">Recent Agent Actions</p>
           {activities.slice(0, 4).map((activity) => (
             <ActivityCard key={activity.id} activity={activity} />
           ))}
+          {activities.length === 0 && (
+            <div className="depth-panel rounded-2xl px-4 py-8 text-center text-sm text-muted-foreground">
+              No agent activity yet.
+            </div>
+          )}
         </div>
       </div>
 
       <div>
-        <h2 className="mb-4 text-lg font-semibold">Recent Transactions</h2>
+        <p className="section-label mb-4">Recent Transactions</p>
         <TransactionTable transactions={payments.slice(0, 5)} />
       </div>
     </div>

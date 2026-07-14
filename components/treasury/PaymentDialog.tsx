@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PAYMENT_CATEGORIES } from "@/lib/constants";
 import type { PaymentType } from "@/types/treasury";
-
 interface PaymentDialogProps {
   open: boolean;
   onClose: () => void;
@@ -18,6 +17,9 @@ interface PaymentDialogProps {
     scheduledAt?: string;
   }) => void;
 }
+
+const selectClass =
+  "mt-1 flex h-10 w-full rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 text-sm transition-colors focus:border-primary/40 focus:outline-none focus:ring-2 focus:ring-primary/25";
 
 export function PaymentDialog({ open, onClose, onSubmit }: PaymentDialogProps) {
   const [recipient, setRecipient] = useState("");
@@ -51,28 +53,32 @@ export function PaymentDialog({ open, onClose, onSubmit }: PaymentDialogProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-      <div className="w-full max-w-md rounded-xl border border-border bg-card p-6 shadow-2xl">
-        <h2 className="text-lg font-semibold">Create Payment</h2>
+    <div className="modal-overlay" onClick={onClose}>
+      <div
+        className="depth-panel-elevated w-full max-w-md rounded-2xl p-6"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <p className="section-label">Treasury</p>
+        <h2 className="mt-1 font-display text-lg font-semibold">Create Payment</h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          Payments are validated by the policy engine before Sphere settlement.
+          Validated by policy engine before Sphere settlement.
         </p>
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
           <div>
-            <label className="text-xs font-medium text-muted-foreground">
+            <label className="text-[10px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
               Recipient
             </label>
             <Input
               placeholder="@alice or wallet address"
               value={recipient}
               onChange={(e) => setRecipient(e.target.value)}
-              className="mt-1"
+              className="mt-1 font-mono text-sm"
             />
           </div>
 
           <div>
-            <label className="text-xs font-medium text-muted-foreground">
+            <label className="text-[10px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
               Amount (UCT)
             </label>
             <Input
@@ -82,19 +88,19 @@ export function PaymentDialog({ open, onClose, onSubmit }: PaymentDialogProps) {
               placeholder="0.00"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              className="mt-1"
+              className="mt-1 font-mono tabular-nums"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs font-medium text-muted-foreground">
+              <label className="text-[10px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
                 Type
               </label>
               <select
                 value={type}
                 onChange={(e) => setType(e.target.value as PaymentType)}
-                className="mt-1 flex h-10 w-full rounded-lg border border-border bg-background px-3 text-sm"
+                className={selectClass}
               >
                 <option value="instant">Instant</option>
                 <option value="scheduled">Scheduled</option>
@@ -104,13 +110,13 @@ export function PaymentDialog({ open, onClose, onSubmit }: PaymentDialogProps) {
               </select>
             </div>
             <div>
-              <label className="text-xs font-medium text-muted-foreground">
+              <label className="text-[10px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
                 Category
               </label>
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="mt-1 flex h-10 w-full rounded-lg border border-border bg-background px-3 text-sm"
+                className={selectClass}
               >
                 {PAYMENT_CATEGORIES.map((c) => (
                   <option key={c} value={c}>
@@ -123,20 +129,20 @@ export function PaymentDialog({ open, onClose, onSubmit }: PaymentDialogProps) {
 
           {type === "scheduled" && (
             <div>
-              <label className="text-xs font-medium text-muted-foreground">
+              <label className="text-[10px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
                 Schedule Date
               </label>
               <Input
                 type="datetime-local"
                 value={scheduledAt}
                 onChange={(e) => setScheduledAt(e.target.value)}
-                className="mt-1"
+                className="mt-1 font-mono text-sm"
               />
             </div>
           )}
 
           <div>
-            <label className="text-xs font-medium text-muted-foreground">
+            <label className="text-[10px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
               Memo
             </label>
             <Input

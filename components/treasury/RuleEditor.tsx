@@ -74,14 +74,18 @@ export function RuleEditor({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-      <div className="w-full max-w-md rounded-xl border border-border bg-card p-6 shadow-2xl">
-        <h2 className="text-lg font-semibold">Edit Policy Rule</h2>
+    <div className="modal-overlay" onClick={onClose}>
+      <div
+        className="depth-panel-elevated w-full max-w-md rounded-2xl p-6"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <p className="section-label">Policy Rule</p>
+        <h2 className="mt-1 font-display text-lg font-semibold">Edit Rule</h2>
         <p className="mt-1 text-sm text-muted-foreground">{config.label}</p>
 
         <div className="mt-6">
           {config.type === "boolean" ? (
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between rounded-xl border border-white/[0.06] bg-white/[0.02] px-4 py-3">
               <span className="text-sm">Enable emergency freeze</span>
               <Switch checked={boolValue} onCheckedChange={setBoolValue} />
             </div>
@@ -90,6 +94,7 @@ export function RuleEditor({
               placeholder="@alice, @bob (comma-separated)"
               value={value}
               onChange={(e) => setValue(e.target.value)}
+              className="font-mono text-sm"
             />
           ) : (
             <Input
@@ -97,6 +102,7 @@ export function RuleEditor({
               step="0.01"
               value={value}
               onChange={(e) => setValue(e.target.value)}
+              className="font-mono tabular-nums"
             />
           )}
         </div>

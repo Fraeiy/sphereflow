@@ -7,6 +7,7 @@ import { AnalyticsCard } from "@/components/treasury/AnalyticsCard";
 import { TreasuryChart } from "@/components/treasury/TreasuryChart";
 import { BudgetChart } from "@/components/treasury/BudgetChart";
 import { TransactionTable } from "@/components/treasury/TransactionTable";
+import { PageHeader } from "@/components/layout/PageHeader";
 import { useTreasury } from "@/hooks/use-treasury";
 import { generateSpendingReport } from "@/services/reports";
 import { formatUCT } from "@/lib/utils";
@@ -48,31 +49,23 @@ export default function ReportsPage() {
   };
 
   return (
-    <div className="space-y-8 p-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Reports</h1>
-          <p className="text-sm text-muted-foreground">
-            Treasury analytics and spending breakdown
-          </p>
-        </div>
+    <div className="space-y-8">
+      <PageHeader
+        title="Reports"
+        description="Treasury analytics and spending breakdown"
+      >
         <Button variant="outline" className="gap-2" onClick={handleExport}>
           <Download className="h-4 w-4" />
-          Export Report
+          Export
         </Button>
-      </div>
+      </PageHeader>
 
       <div className="flex gap-2">
         {(["daily", "weekly", "monthly"] as Period[]).map((p) => (
           <button
             key={p}
             onClick={() => setPeriod(p)}
-            className={cn(
-              "rounded-lg px-4 py-2 text-sm capitalize transition-colors",
-              period === p
-                ? "bg-primary/10 text-primary font-medium"
-                : "text-muted-foreground hover:bg-muted/10"
-            )}
+            className={cn("filter-pill", period === p && "filter-pill-active")}
           >
             {p}
           </button>
@@ -121,9 +114,9 @@ export default function ReportsPage() {
       </div>
 
       <div>
-        <h2 className="mb-4 text-lg font-semibold">
+        <p className="section-label mb-4">
           {period.charAt(0).toUpperCase() + period.slice(1)} Transactions
-        </h2>
+        </p>
         <TransactionTable transactions={report.transactions} />
       </div>
     </div>

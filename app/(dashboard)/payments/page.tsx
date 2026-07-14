@@ -4,9 +4,9 @@ import { useState } from "react";
 import { Plus, Check, X } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { TransactionTable } from "@/components/treasury/TransactionTable";
 import { PaymentDialog } from "@/components/treasury/PaymentDialog";
+import { PageHeader } from "@/components/layout/PageHeader";
 import { useTreasury } from "@/hooks/use-treasury";
 import {
   savePayment,
@@ -17,7 +17,10 @@ import { validatePayment, shouldAutoApprove } from "@/lib/policy-engine";
 import { executeSphereTransfer } from "@/sphere/client";
 import { formatUCT } from "@/lib/amounts";
 import { generateId } from "@/lib/utils";
-import type { Payment, PaymentType } from "@/types/treasury";
+import { cn } from "@/lib/utils";
+import type { Payment, PaymentStatus, PaymentType } from "@/types/treasury";
+
+type Filter = "all" | PaymentStatus;
 
 export default function PaymentsPage() {
   const {
@@ -31,6 +34,7 @@ export default function PaymentsPage() {
     setActivities,
   } = useTreasury();
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [filter, setFilter] = useState<Filter>("all");
 
   const handleCreatePayment = async (data: {
     recipient: string;
@@ -86,9 +90,10 @@ export default function PaymentsPage() {
           transferId: transfer.transferId,
           deliveryPending: transfer.deliveryPending,
         });
-        if (updated) setPayments((prev) =>
-          prev.map((p) => (p.id === payment.id ? updated : p))
-        );
+        if (updated)
+          setPayments((prev) =>
+            prev.map((p) => (p.id === payment.id ? updated : p))
+          );
         toast.success("Payment settled via Sphere SDK");
       } else {
         toast.error(transfer.error ?? "Settlement failed");
@@ -154,43 +159,52 @@ export default function PaymentsPage() {
   };
 
   const pending = payments.filter((p) => p.status === "pending");
+  const filtered =
+    filter === "all"
+      ? payments
+      : payments.filter((p) => p.status === filter);
+
+  const filters: Filter[] = ["all", "completed", "scheduled", "pending"];
 
   return (
-    <div className="space-y-6 p-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Payments</h1>
-          <p className="text-sm text-muted-foreground">
-            Create and manage treasury payments with policy validation
-          </p>
-        </div>
+    <div className="space-y-8">
+      <PageHeader
+        title="Payments"
+        description="Create and manage treasury payments with policy validation"
+      >
         <Button onClick={() => setDialogOpen(true)} className="gap-2">
           <Plus className="h-4 w-4" />
           New Payment
         </Button>
-      </div>
+      </PageHeader>
 
       {pending.length > 0 && (
         <div className="space-y-3">
-          <h2 className="text-sm font-medium text-muted-foreground">
+          <p className="section-label">
             Pending Approval ({pending.length})
-          </h2>
+          </p>
           {pending.map((payment) => (
             <div
               key={payment.id}
-              className="flex items-center justify-between rounded-xl border border-border bg-card p-4"
+              className="depth-panel flex items-center justify-between rounded-2xl p-4"
             >
               <div>
-                <p className="font-medium">
-                  {formatUCT(payment.amount)} → {payment.recipient}
+                <p className="font-mono text-sm font-medium tabular-nums">
+                  {formatUCT(payment.amount)}
+                  <span className="mx-2 text-muted-foreground">→</span>
+                  {payment.recipient}
                 </p>
-                <p className="text-sm text-muted-foreground">{payment.memo}</p>
+                {payment.memo && (
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {payment.memo}
+                  </p>
+                )}
               </div>
               <div className="flex gap-2">
                 <Button
                   size="sm"
                   variant="outline"
-                  className="gap-1 text-emerald-400"
+                  className="gap-1 border-emerald-500/30 text-emerald-400"
                   onClick={() => handleApprove(payment)}
                 >
                   <Check className="h-3 w-3" />
@@ -199,7 +213,7 @@ export default function PaymentsPage() {
                 <Button
                   size="sm"
                   variant="outline"
-                  className="gap-1 text-red-400"
+                  className="gap-1 border-red-500/30 text-red-400"
                   onClick={() => handleReject(payment)}
                 >
                   <X className="h-3 w-3" />
@@ -211,16 +225,28 @@ export default function PaymentsPage() {
         </div>
       )}
 
-      <div className="flex gap-2">
-        {["all", "completed", "scheduled", "pending"].map((filter) => (
-          <Badge key={filter} variant="secondary" className="capitalize">
-            {filter}
-          </Badge>
+      <div className="flex flex-wrap gap-2">
+        {filters.map((f) => (
+          <button
+            key={f}
+            onClick={() => setFilter(f)}
+            className={cn(
+              "filter-pill",
+              filter === f && "filter-pill-active"
+            )}
+          >
+            {f}
+            {f !== "all" && (
+              <span className="ml-1.5 font-mono text-[10px] opacity-70">
+                {payments.filter((p) => p.status === f).length}
+              </span>
+            )}
+          </button>
         ))}
       </div>
 
       <TransactionTable
-        transactions={payments}
+        transactions={filtered}
         emptyMessage="No payments yet. Create your first treasury payment."
       />
 

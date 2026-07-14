@@ -225,15 +225,13 @@ export default function ChatPage() {
   );
 
   return (
-    <div className="flex h-[calc(100vh-7rem)] flex-col">
-      <div className="border-b border-white/[0.06] px-6 py-5">
-        <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-primary/80">
-          Agent Interface
-        </p>
-        <h1 className="mt-1 font-display text-xl font-semibold">
+    <div className="flex h-[calc(100vh-7rem)] flex-col -mx-6 -mt-6 lg:-mx-8 lg:-mt-8">
+      <div className="border-b border-white/[0.06] px-6 py-5 lg:px-8">
+        <p className="section-label">Agent Interface</p>
+        <h1 className="mt-1 font-display text-2xl font-semibold tracking-tight">
           Treasury Chat
         </h1>
-        <p className="mt-1 text-sm text-muted-foreground">
+        <p className="mt-2 text-sm text-muted-foreground">
           Mandates compile to policy — execution stays deterministic
         </p>
       </div>

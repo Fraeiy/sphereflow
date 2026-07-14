@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 interface PageHeaderProps {
   title: string;
   description?: string;
+  eyebrow?: string;
   children?: React.ReactNode;
   className?: string;
 }
@@ -10,6 +11,7 @@ interface PageHeaderProps {
 export function PageHeader({
   title,
   description,
+  eyebrow = "SphereFlow",
   children,
   className,
 }: PageHeaderProps) {
@@ -21,9 +23,7 @@ export function PageHeader({
       )}
     >
       <div>
-        <p className="text-[11px] font-medium uppercase tracking-[0.24em] text-primary/80">
-          SphereFlow
-        </p>
+        <p className="section-label">{eyebrow}</p>
         <h1 className="mt-1 font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
           {title}
         </h1>
