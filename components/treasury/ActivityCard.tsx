@@ -65,7 +65,7 @@ export function ActivityCard({ activity, className }: ActivityCardProps) {
   return (
     <div
       className={cn(
-        "flex gap-4 rounded-xl border border-border bg-card p-4 transition-colors hover:border-primary/20",
+        "depth-panel flex gap-4 rounded-2xl p-4 transition-all duration-200 hover:border-white/12",
         className
       )}
     >

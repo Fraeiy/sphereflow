@@ -226,10 +226,15 @@ export default function ChatPage() {
 
   return (
     <div className="flex h-[calc(100vh-7rem)] flex-col">
-      <div className="border-b border-border px-6 py-4">
-        <h1 className="text-xl font-bold">AI Treasury Chat</h1>
-        <p className="text-sm text-muted-foreground">
-          Set financial mandates — the policy engine executes, not the LLM
+      <div className="border-b border-white/[0.06] px-6 py-5">
+        <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-primary/80">
+          Agent Interface
+        </p>
+        <h1 className="mt-1 font-display text-xl font-semibold">
+          Treasury Chat
+        </h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Mandates compile to policy — execution stays deterministic
         </p>
       </div>
       <div className="flex-1 overflow-hidden">

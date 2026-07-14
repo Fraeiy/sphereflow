@@ -15,6 +15,7 @@ import { ActivityCard } from "@/components/treasury/ActivityCard";
 import { TransactionTable } from "@/components/treasury/TransactionTable";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
+import { PageHeader } from "@/components/layout/PageHeader";
 import { useTreasury } from "@/hooks/use-treasury";
 import { generateSpendingReport } from "@/services/reports";
 
@@ -38,16 +39,15 @@ export default function DashboardPage() {
   const weeklyReport = generateSpendingReport(payments, "weekly");
 
   return (
-    <div className="space-y-8 p-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
-          <p className="text-sm text-muted-foreground">
-            {isLive && connection
-              ? "Live testnet treasury — real UCT balance from Sphere"
-              : "Treasury overview and agent health"}
-          </p>
-        </div>
+    <div className="space-y-8">
+      <PageHeader
+        title="Dashboard"
+        description={
+          isLive && connection
+            ? "Live testnet treasury — balances synced from Sphere Connect"
+            : "Treasury overview, policy health, and agent activity"
+        }
+      >
         <Badge
           variant={
             snapshot.healthScore >= 80
@@ -57,9 +57,9 @@ export default function DashboardPage() {
                 : "destructive"
           }
         >
-          Health: {snapshot.healthScore}/100
+          Health {snapshot.healthScore}
         </Badge>
-      </div>
+      </PageHeader>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <TreasuryCard

@@ -7,7 +7,7 @@ import { CTA } from "@/components/landing/CTA";
 
 export default function LandingPage() {
   return (
-    <main>
+    <main className="app-mesh min-h-screen">
       <Navbar />
       <Hero />
       <div id="features">
@@ -20,8 +20,11 @@ export default function LandingPage() {
         <HowItWorks />
       </div>
       <CTA />
-      <footer className="border-t border-border px-6 py-8 text-center text-sm text-muted-foreground">
-        <p>© 2026 SphereFlow · Built for Unicity Sphere</p>
+      <footer className="border-t border-white/[0.06] px-6 py-10">
+        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 text-sm text-muted-foreground sm:flex-row">
+          <p>© 2026 SphereFlow · Unicity Sphere</p>
+          <p className="font-mono text-xs">Policy engine · Sphere Connect v2</p>
+        </div>
       </footer>
     </main>
   );

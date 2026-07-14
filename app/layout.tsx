@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, JetBrains_Mono, Syne } from "next/font/google";
 import { AppProviders } from "@/components/providers/app-providers";
 import { ExtensionGuard } from "@/components/providers/extension-guard";
 import { APP_DESCRIPTION, APP_NAME, APP_TAGLINE } from "@/lib/constants";
@@ -8,6 +8,18 @@ import "./globals.css";
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
+});
+
+const display = Syne({
+  variable: "--font-display",
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+});
+
+const mono = JetBrains_Mono({
+  variable: "--font-mono",
+  subsets: ["latin"],
+  weight: ["400", "500"],
 });
 
 export const metadata: Metadata = {
@@ -32,7 +44,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} h-full dark`}>
+    <html
+      lang="en"
+      className={`${inter.variable} ${display.variable} ${mono.variable} h-full dark`}
+    >
       <body className="min-h-full bg-background text-foreground antialiased">
         <ExtensionGuard />
         <AppProviders>{children}</AppProviders>

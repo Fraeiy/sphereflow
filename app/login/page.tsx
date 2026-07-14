@@ -4,10 +4,11 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Sparkles, Wallet, Shield, Loader2 } from "lucide-react";
+import { Wallet, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { DepthCard } from "@/components/ui/depth-card";
+import { Logo } from "@/components/ui/logo";
+import { SceneOrb } from "@/components/ui/scene-orb";
 import { useTreasury } from "@/hooks/use-treasury";
 import { willAutoConnect } from "@/sphere/client";
 import { toast } from "sonner";
@@ -33,7 +34,7 @@ export default function LoginPage() {
           router.push("/dashboard");
           return;
         } catch {
-          // Fall through to manual connect
+          // manual connect
         }
       }
       setAutoConnecting(false);
@@ -60,79 +61,87 @@ export default function LoginPage() {
 
   if (autoConnecting) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
+      <div className="app-mesh flex min-h-screen items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-6">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md"
-      >
-        <div className="mb-8 text-center">
-          <Link href="/" className="inline-flex items-center gap-2">
-            <div className="rounded-lg bg-primary/10 p-2">
-              <Sparkles className="h-5 w-5 text-primary" />
-            </div>
-            <span className="text-xl font-semibold">SphereFlow</span>
-          </Link>
+    <div className="app-mesh relative flex min-h-screen">
+      <div className="app-grid pointer-events-none absolute inset-0 opacity-40" />
+
+      <div className="relative hidden w-1/2 flex-col justify-between border-r border-white/[0.06] p-12 lg:flex">
+        <Link href="/">
+          <Logo />
+        </Link>
+        <div>
+          <h1 className="font-display text-4xl font-semibold leading-tight tracking-tight">
+            Treasury operations
+            <span className="block text-gradient-gold">on Sphere</span>
+          </h1>
+          <p className="mt-4 max-w-md text-sm leading-relaxed text-muted-foreground">
+            Connect your wallet to access live testnet balances, policy
+            enforcement, and autonomous settlement.
+          </p>
         </div>
+        <SceneOrb size="md" className="absolute bottom-12 right-12 opacity-80" />
+        <p className="font-mono text-xs text-muted-foreground">
+          Sphere Connect v2 · testnet2
+        </p>
+      </div>
 
-        <Card>
-          <CardHeader className="text-center">
-            <CardTitle>Connect Your Treasury</CardTitle>
-            <p className="text-sm text-muted-foreground">
-              Authenticate via Sphere Connect protocol on testnet2
-            </p>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <Button
-              className="w-full gap-2"
-              size="lg"
-              onClick={handleConnect}
-              disabled={isConnecting}
-            >
-              {isConnecting ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Wallet className="h-4 w-4" />
-              )}
-              Connect Sphere Wallet
-            </Button>
+      <div className="relative flex flex-1 items-center justify-center px-6 py-12">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="w-full max-w-md"
+        >
+          <div className="mb-8 lg:hidden">
+            <Link href="/">
+              <Logo />
+            </Link>
+          </div>
 
-            <Button
-              variant="outline"
-              className="w-full"
-              onClick={handleDemo}
-            >
-              Continue with Demo Mode
-            </Button>
+          <DepthCard glow tilt={false}>
+            <div className="p-8">
+              <h2 className="font-display text-2xl font-semibold">
+                Authenticate
+              </h2>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Sphere Connect — keys never leave your wallet
+              </p>
 
-            <div className="rounded-lg bg-muted/10 p-4">
-              <div className="flex items-start gap-3">
-                <Shield className="mt-0.5 h-4 w-4 text-primary" />
-                <div className="text-xs text-muted-foreground">
-                  <p className="font-medium text-foreground">
-                    Secure Connect Protocol v2.0
-                  </p>
-                  <p className="mt-1">
-                    Private keys never leave your Sphere wallet. SphereFlow
-                    requests permissions for balance reads and transfer intents.
-                  </p>
-                </div>
+              <div className="mt-8 space-y-3">
+                <Button
+                  className="h-12 w-full"
+                  size="lg"
+                  onClick={handleConnect}
+                  disabled={isConnecting}
+                >
+                  {isConnecting ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Wallet className="h-4 w-4" />
+                  )}
+                  Connect Sphere Wallet
+                </Button>
+                <Button
+                  variant="outline"
+                  className="h-11 w-full"
+                  onClick={handleDemo}
+                >
+                  Continue in Demo Mode
+                </Button>
               </div>
-            </div>
 
-            <div className="flex justify-center">
-              <Badge variant="secondary">Network: testnet2</Badge>
+              <p className="mt-6 text-center font-mono text-[11px] text-muted-foreground">
+                network_id: 4 · testnet2
+              </p>
             </div>
-          </CardContent>
-        </Card>
-      </motion.div>
+          </DepthCard>
+        </motion.div>
+      </div>
     </div>
   );
 }

@@ -2,82 +2,101 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { SceneOrb } from "@/components/ui/scene-orb";
+import { DepthCard } from "@/components/ui/depth-card";
 
 export function Hero() {
   return (
-    <section className="relative overflow-hidden px-6 pb-24 pt-32">
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute left-1/2 top-0 h-[500px] w-[800px] -translate-x-1/2 rounded-full bg-primary/5 blur-[120px]" />
-      </div>
+    <section className="relative min-h-[92vh] overflow-hidden px-6 pb-20 pt-28">
+      <div className="app-grid pointer-events-none absolute inset-0 opacity-60" />
 
-      <div className="relative mx-auto max-w-4xl text-center">
+      <div className="relative mx-auto grid max-w-6xl items-center gap-16 lg:grid-cols-[1.1fr_0.9fr]">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          initial={{ opacity: 0, x: -24 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
         >
-          <Badge variant="gold" className="mb-6">
-            Unicity Epoch Four Builder Program
-          </Badge>
-          <h1 className="text-5xl font-bold tracking-tight sm:text-6xl">
-            Your Autonomous
-            <span className="block bg-gradient-to-r from-primary to-[#D4AF37] bg-clip-text text-transparent">
-              AI Treasury
+          <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-primary/90">
+            Unicity Epoch Four
+          </p>
+          <h1 className="mt-4 font-display text-5xl font-semibold leading-[1.05] tracking-tight sm:text-6xl lg:text-[4rem]">
+            Autonomous treasury
+            <span className="mt-1 block text-gradient-gold">
+              for Sphere agents
             </span>
           </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-            Set financial mandates in natural language. The policy engine
-            validates every action. Sphere SDK settles on-chain. Like Cursor,
-            but for treasury management.
+          <p className="mt-6 max-w-lg text-base leading-relaxed text-muted-foreground">
+            Financial mandates in natural language. Deterministic policy
+            execution. On-chain settlement through Sphere SDK — built for
+            production treasury operations, not demos.
           </p>
-          <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+          <div className="mt-10 flex flex-wrap items-center gap-4">
             <Button asChild size="lg">
               <Link href="/login">
-                Connect Sphere Wallet
+                Connect Wallet
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
             <Button asChild variant="outline" size="lg">
-              <Link href="/dashboard">View Demo Dashboard</Link>
+              <Link href="/dashboard">Explore Dashboard</Link>
             </Button>
           </div>
+          <dl className="mt-14 grid grid-cols-3 gap-6 border-t border-white/[0.06] pt-8">
+            {[
+              { label: "Settlement", value: "Sphere SDK" },
+              { label: "Execution", value: "Policy Engine" },
+              { label: "Network", value: "testnet2" },
+            ].map((item) => (
+              <div key={item.label}>
+                <dt className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                  {item.label}
+                </dt>
+                <dd className="mt-1 font-mono text-sm font-medium text-foreground">
+                  {item.value}
+                </dd>
+              </div>
+            ))}
+          </dl>
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-          className="mx-auto mt-16 max-w-3xl rounded-2xl border border-border bg-card/80 p-1 backdrop-blur"
-        >
-          <div className="rounded-xl bg-background p-6 text-left">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Sparkles className="h-4 w-4 text-primary" />
-              AI Treasury Chat
-            </div>
-            <div className="mt-4 space-y-3">
-              <div className="rounded-lg bg-primary/10 px-4 py-2 text-sm text-primary">
-                &quot;Keep 100 UCT in reserve. Never spend more than 25 UCT/day.
-                Auto-pay invoices below 10 UCT.&quot;
+        <div className="relative flex items-center justify-center lg:justify-end">
+          <SceneOrb size="lg" className="absolute -right-8 opacity-90" />
+          <motion.div
+            className="relative z-10 w-full max-w-md"
+            initial={{ opacity: 0, y: 32 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+          >
+            <DepthCard glow tilt className="w-full">
+              <div className="p-6">
+                <div className="flex items-center justify-between border-b border-white/[0.06] pb-4">
+                  <span className="font-mono text-xs text-muted-foreground">
+                    treasury_agent.session
+                  </span>
+                  <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
+                </div>
+                <div className="mt-5 space-y-3 font-mono text-[13px] leading-relaxed">
+                  <p className="text-muted-foreground">
+                    <span className="text-primary/80">→</span> mandate received
+                  </p>
+                  <p className="rounded-lg border border-primary/20 bg-primary/[0.06] px-3 py-2.5 text-foreground/90">
+                    Reserve 100 UCT · Daily cap 25 UCT · Auto-approve &lt; 10
+                  </p>
+                  <p className="text-muted-foreground">
+                    <span className="text-emerald-400/80">✓</span> policy
+                    validated
+                  </p>
+                  <p className="text-muted-foreground">
+                    <span className="text-emerald-400/80">✓</span> awaiting
+                    sphere settlement
+                  </p>
+                </div>
               </div>
-              <div className="rounded-lg border border-border px-4 py-3 text-sm">
-                <p className="text-muted-foreground">
-                  I&apos;ve configured your treasury policy:
-                </p>
-                <ul className="mt-2 space-y-1 text-sm">
-                  <li>• Reserve: 100 UCT</li>
-                  <li>• Daily limit: 25 UCT</li>
-                  <li>• Auto-approve threshold: 10 UCT</li>
-                </ul>
-                <p className="mt-2 text-xs text-muted-foreground">
-                  Policy engine validated · Ready for autonomous execution
-                </p>
-              </div>
-            </div>
-          </div>
-        </motion.div>
+            </DepthCard>
+          </motion.div>
+        </div>
       </div>
     </section>
   );
