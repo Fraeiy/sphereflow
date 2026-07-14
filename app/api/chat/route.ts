@@ -1,5 +1,5 @@
 import { generateText } from "ai";
-import { buildChatMessages } from "@/ai/prompts";
+import { buildChatMessages, TREASURY_SYSTEM_PROMPT } from "@/ai/prompts";
 import { getAiConfigError, getChatModel } from "@/lib/ai/provider";
 
 export const maxDuration = 30;
@@ -31,6 +31,7 @@ export async function POST(req: Request) {
 
     const { text } = await generateText({
       model,
+      system: TREASURY_SYSTEM_PROMPT,
       messages: chatMessages,
       temperature: 0.3,
     });

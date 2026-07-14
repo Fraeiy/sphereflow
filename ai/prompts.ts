@@ -42,7 +42,6 @@ export function buildChatMessages(
   userMessage: string
 ) {
   return [
-    { role: "system" as const, content: TREASURY_SYSTEM_PROMPT },
     ...history.map((m) => ({ role: m.role, content: m.content })),
     { role: "user" as const, content: userMessage },
   ];
