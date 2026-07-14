@@ -1,7 +1,14 @@
 "use client";
 
 import type { WalletIdentity } from "@/types/treasury";
-import { SPHERE_WALLET_URL, UCT_DECIMALS } from "@/lib/constants";
+import { SPHERE_WALLET_URL } from "@/lib/constants";
+import {
+  cacheTokenDecimals,
+  fromBaseUnits,
+  getCachedTokenDecimals,
+  resolveTokenDecimals,
+  toBaseUnits,
+} from "@/lib/amounts";
 
 const SESSION_KEY = "sphereflow-session";
 const IDENTITY_KEY = "sphereflow-identity";
@@ -62,10 +69,12 @@ const CONNECT_PERMISSIONS = [
 ] as const;
 
 function assetToHuman(asset: SphereAsset): number {
-  const raw = asset.confirmedAmount || asset.totalAmount || "0";
-  const base = BigInt(raw);
-  const divisor = BigInt(10 ** (asset.decimals ?? UCT_DECIMALS));
-  return Number(base) / Number(divisor);
+  const decimals = resolveTokenDecimals(asset.decimals);
+  cacheTokenDecimals(decimals);
+  return fromBaseUnits(
+    asset.confirmedAmount || asset.totalAmount || "0",
+    decimals
+  );
 }
 
 export function getCachedUctCoinId(): string | null {
@@ -93,6 +102,9 @@ export async function resolveUctAsset(
 
     if (uct?.coinId) {
       cacheUctCoinId(uct.coinId);
+    }
+    if (uct?.decimals) {
+      cacheTokenDecimals(resolveTokenDecimals(uct.decimals));
     }
 
     return uct ?? null;
@@ -134,14 +146,10 @@ export async function executeSphereTransfer(
 ): Promise<SphereSendResult> {
   try {
     const asset = await resolveUctAsset(client);
-    const decimals = asset?.decimals ?? UCT_DECIMALS;
+    const decimals = resolveTokenDecimals(asset?.decimals);
     const coinId = asset?.coinId ?? getCachedUctCoinId() ?? "UCT";
 
-    const { parseTokenAmount } = await import("@unicitylabs/sphere-sdk");
-    const baseAmount = parseTokenAmount(
-      params.amount.toString(),
-      decimals
-    ).toString();
+    const baseAmount = await toBaseUnits(params.amount, decimals);
 
     const payload = {
       to: params.recipient,

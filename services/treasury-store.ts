@@ -9,6 +9,7 @@ import type {
   TreasurySnapshot,
 } from "@/types/treasury";
 import { DEFAULT_POLICY } from "@/lib/constants";
+import { fromBaseUnits, getCachedTokenDecimals } from "@/lib/amounts";
 import { generateId } from "@/lib/utils";
 import {
   calculateAvailableFunds,
@@ -234,19 +235,28 @@ export function syncHistoryToPayments(
     existing.map((p) => p.transferId).filter(Boolean)
   );
 
+  const decimals = getCachedTokenDecimals();
+  const updated = [...existing];
   const newPayments: Payment[] = [];
 
   for (const entry of history) {
     const transferId = entry.transferId ?? entry.id;
-    if (transferId && existingIds.has(transferId)) continue;
-
-    const rawAmount = entry.amount ? BigInt(entry.amount) : BigInt(0);
-    const amount = Number(rawAmount) / 1_000_000;
+    const amount = fromBaseUnits(entry.amount ?? "0", decimals);
 
     const ts =
       typeof entry.timestamp === "number"
         ? new Date(entry.timestamp).toISOString()
         : entry.timestamp ?? new Date().toISOString();
+
+    if (transferId) {
+      const idx = updated.findIndex((p) => p.transferId === transferId);
+      if (idx >= 0) {
+        updated[idx] = { ...updated[idx], amount };
+        continue;
+      }
+    }
+
+    if (transferId && existingIds.has(transferId)) continue;
 
     newPayments.push({
       id: generateId(),
@@ -263,8 +273,12 @@ export function syncHistoryToPayments(
     });
   }
 
-  if (newPayments.length > 0) {
-    writeJSON(storageKey(userId, "payments"), [...newPayments, ...existing]);
+  const amountsFixed = updated.some(
+    (p, i) => existing[i] && p.amount !== existing[i].amount
+  );
+
+  if (newPayments.length > 0 || amountsFixed) {
+    writeJSON(storageKey(userId, "payments"), [...newPayments, ...updated]);
   }
 }
 

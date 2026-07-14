@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { Shield } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { formatUCT } from "@/lib/utils";
+import { formatUCTValue } from "@/lib/amounts";
 
 interface ReserveWidgetProps {
   reserved: number;
@@ -41,14 +41,14 @@ export function ReserveWidget({ reserved, available, balance }: ReserveWidgetPro
         <div className="grid grid-cols-2 gap-4">
           <div>
             <p className="text-xs text-muted-foreground">Reserved</p>
-            <p className="text-lg font-semibold text-primary">
-              {formatUCT(reserved)}
+            <p className="text-lg font-semibold tabular-nums text-primary">
+              {formatUCTValue(reserved)} <span className="text-xs text-muted-foreground">UCT</span>
             </p>
           </div>
           <div>
             <p className="text-xs text-muted-foreground">Available</p>
-            <p className="text-lg font-semibold text-[#D4AF37]">
-              {formatUCT(available)}
+            <p className="text-lg font-semibold tabular-nums text-[#D4AF37]">
+              {formatUCTValue(available)} <span className="text-xs text-muted-foreground">UCT</span>
             </p>
           </div>
         </div>

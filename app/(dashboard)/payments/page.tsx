@@ -15,6 +15,7 @@ import {
 } from "@/services/treasury-store";
 import { validatePayment, shouldAutoApprove } from "@/lib/policy-engine";
 import { executeSphereTransfer } from "@/sphere/client";
+import { formatUCT } from "@/lib/amounts";
 import { generateId } from "@/lib/utils";
 import type { Payment, PaymentType } from "@/types/treasury";
 
@@ -181,7 +182,7 @@ export default function PaymentsPage() {
             >
               <div>
                 <p className="font-medium">
-                  {payment.amount} UCT → {payment.recipient}
+                  {formatUCT(payment.amount)} → {payment.recipient}
                 </p>
                 <p className="text-sm text-muted-foreground">{payment.memo}</p>
               </div>

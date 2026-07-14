@@ -18,7 +18,8 @@ export const SPHERE_WALLET_URL =
 export const UCT_COIN_ID =
   process.env.NEXT_PUBLIC_UCT_COIN_ID ?? "UCT";
 
-export const UCT_DECIMALS = 6;
+/** Sphere SDK default — UCT uses 18 decimal places on testnet2. */
+export const UCT_DECIMALS = 18;
 
 export const DEFAULT_POLICY = {
   reserveBalance: 0,

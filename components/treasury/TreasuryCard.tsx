@@ -1,7 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { cn, formatUCT } from "@/lib/utils";
+import { formatUCTValue } from "@/lib/amounts";
+import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { LucideIcon } from "lucide-react";
 
@@ -12,6 +13,8 @@ interface TreasuryCardProps {
   icon?: LucideIcon;
   trend?: { value: number; label: string };
   suffix?: string;
+  /** When false, renders the number without UCT formatting (e.g. health score). */
+  formatAsUct?: boolean;
   className?: string;
   delay?: number;
 }
@@ -23,11 +26,18 @@ export function TreasuryCard({
   icon: Icon,
   trend,
   suffix,
+  formatAsUct = true,
   className,
   delay = 0,
 }: TreasuryCardProps) {
+  const isNumber = typeof value === "number";
   const displayValue =
-    typeof value === "number" ? formatUCT(value) : value;
+    isNumber && formatAsUct
+      ? formatUCTValue(value)
+      : isNumber
+        ? value.toLocaleString("en-US")
+        : value;
+  const showUnit = isNumber && formatAsUct && !suffix;
 
   return (
     <motion.div
@@ -47,10 +57,17 @@ export function TreasuryCard({
           )}
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-semibold tracking-tight">
-            {displayValue}
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-xl font-semibold tabular-nums tracking-tight">
+              {displayValue}
+            </span>
+            {showUnit && (
+              <span className="text-sm font-medium text-muted-foreground">
+                UCT
+              </span>
+            )}
             {suffix && (
-              <span className="ml-1 text-sm font-normal text-muted-foreground">
+              <span className="text-sm font-normal text-muted-foreground">
                 {suffix}
               </span>
             )}

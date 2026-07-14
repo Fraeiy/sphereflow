@@ -102,6 +102,7 @@ export default function DashboardPage() {
           title="Pending Payments"
           value={snapshot.pendingPayments}
           suffix="payments"
+          formatAsUct={false}
           icon={Activity}
           delay={0.25}
         />
@@ -109,6 +110,7 @@ export default function DashboardPage() {
           title="Treasury Health"
           value={snapshot.healthScore}
           suffix="/ 100"
+          formatAsUct={false}
           icon={Heart}
           delay={0.3}
         />

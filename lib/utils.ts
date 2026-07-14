@@ -5,12 +5,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function formatUCT(amount: number, decimals = 2): string {
-  return `${amount.toLocaleString("en-US", {
-    minimumFractionDigits: decimals,
-    maximumFractionDigits: decimals,
-  })} UCT`;
-}
+export { formatUCT, formatUCTValue, fromBaseUnits } from "@/lib/amounts";
 
 export function formatCurrency(amount: number): string {
   return amount.toLocaleString("en-US", {
