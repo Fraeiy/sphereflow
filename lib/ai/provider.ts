@@ -54,12 +54,13 @@ export function getChatModel(): LanguageModel | null {
     });
 
     const modelId = process.env.OPENROUTER_MODEL ?? "openai/gpt-4o-mini";
-    return provider(modelId);
+    // OpenRouter is Chat Completions–compatible; avoid the Responses API.
+    return provider.chat(modelId);
   }
 
   const provider = createOpenAI({ apiKey: resolved.apiKey });
   const modelId = process.env.OPENAI_MODEL ?? "gpt-4o-mini";
-  return provider(modelId);
+  return provider.chat(modelId);
 }
 
 export function getAiConfigError(): string | null {
