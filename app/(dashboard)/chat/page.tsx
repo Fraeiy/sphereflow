@@ -142,7 +142,9 @@ export default function ChatPage() {
           if (
             response.status === 500 &&
             typeof err.error === "string" &&
-            err.error.includes("OPENAI_API_KEY")
+            (err.error.includes("API key") ||
+              err.error.includes("OPENAI_API_KEY") ||
+              err.error.includes("OPENROUTER_API_KEY"))
           ) {
             const fallback = generateFallbackPlan(text.trim());
             const assistantMessage: ChatMessage = {
