@@ -1,4 +1,4 @@
-import { streamText } from "ai";
+import { generateText } from "ai";
 import { buildChatMessages } from "@/ai/prompts";
 import { getAiConfigError, getChatModel } from "@/lib/ai/provider";
 
@@ -29,16 +29,25 @@ export async function POST(req: Request) {
 
     const chatMessages = buildChatMessages(messages, userMessage);
 
-    const result = streamText({
+    const { text } = await generateText({
       model,
       messages: chatMessages,
       temperature: 0.3,
-      onError: ({ error }) => {
-        console.error("[api/chat] stream error:", error);
-      },
     });
 
-    return result.toTextStreamResponse();
+    if (!text.trim()) {
+      return new Response(
+        JSON.stringify({
+          error:
+            "AI returned an empty response. Verify your OpenRouter API key and model access.",
+        }),
+        { status: 502, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    return new Response(text, {
+      headers: { "Content-Type": "text/plain; charset=utf-8" },
+    });
   } catch (error) {
     const message =
       error instanceof Error ? error.message : "Chat request failed";
