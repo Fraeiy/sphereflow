@@ -195,6 +195,12 @@ export default function ChatPage() {
           }
         }
 
+        if (!fullContent.trim()) {
+          throw new Error(
+            "AI returned an empty response. Check that your OpenRouter API key is set correctly in Vercel and redeploy."
+          );
+        }
+
         const plan = parseTreasuryPlan(fullContent);
         const cleanContent = stripPlanBlock(fullContent) || fullContent;
 

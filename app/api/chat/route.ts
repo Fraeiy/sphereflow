@@ -33,6 +33,9 @@ export async function POST(req: Request) {
       model,
       messages: chatMessages,
       temperature: 0.3,
+      onError: ({ error }) => {
+        console.error("[api/chat] stream error:", error);
+      },
     });
 
     return result.toTextStreamResponse();

@@ -8,20 +8,28 @@ function isOpenRouterKey(key: string) {
   return key.startsWith("sk-or-");
 }
 
+function isUsableKey(key: string | undefined) {
+  return Boolean(key && key.length >= 20);
+}
+
 function resolveApiKey() {
   const openRouterKey = process.env.OPENROUTER_API_KEY?.trim();
   const openAiKey = process.env.OPENAI_API_KEY?.trim();
+  const forcedProvider = process.env.AI_PROVIDER?.trim().toLowerCase();
 
-  if (openRouterKey) {
-    return { provider: "openrouter" as const, apiKey: openRouterKey };
+  if (isUsableKey(openRouterKey)) {
+    return { provider: "openrouter" as const, apiKey: openRouterKey! };
   }
 
-  if (openAiKey && isOpenRouterKey(openAiKey)) {
-    return { provider: "openrouter" as const, apiKey: openAiKey };
+  if (
+    isUsableKey(openAiKey) &&
+    (forcedProvider === "openrouter" || isOpenRouterKey(openAiKey!))
+  ) {
+    return { provider: "openrouter" as const, apiKey: openAiKey! };
   }
 
-  if (openAiKey) {
-    return { provider: "openai" as const, apiKey: openAiKey };
+  if (isUsableKey(openAiKey)) {
+    return { provider: "openai" as const, apiKey: openAiKey! };
   }
 
   return null;
@@ -57,5 +65,5 @@ export function getChatModel(): LanguageModel | null {
 export function getAiConfigError(): string | null {
   if (resolveApiKey()) return null;
 
-  return "No AI API key configured. Set OPENROUTER_API_KEY (recommended) or OPENAI_API_KEY in Vercel → Settings → Environment Variables, then redeploy.";
+  return "No AI API key configured. In Vercel → Project → Settings → Environment Variables, add OPENROUTER_API_KEY (or OPENAI_API_KEY) with your full OpenRouter key (sk-or-v1-...), set AI_PROVIDER=openrouter, then redeploy.";
 }
