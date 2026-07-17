@@ -42,6 +42,7 @@
 html {
   color-scheme: dark;
   scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
@@ -50,6 +51,34 @@ body {
   font-family: var(--font-inter), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* Mobile touch targets & overflow */
+@media (max-width: 640px) {
+  .data-table {
+    font-size: 0.8125rem;
+  }
+
+  .data-table th,
+  .data-table td {
+    padding: 0.65rem 0.75rem;
+  }
+}
+
+/* Prevent iOS zoom on focused inputs (font-size >= 16px already on chat) */
+input,
+select,
+textarea {
+  font-size: max(16px, 1em);
+}
+
+@media (min-width: 640px) {
+  input,
+  select,
+  textarea {
+    font-size: inherit;
+  }
 }
 
 /* Ambient mesh + grid */

@@ -47,7 +47,7 @@ export function AIChat({
     <div className="flex h-full flex-col">
       <div
         ref={scrollRef}
-        className="flex-1 space-y-4 overflow-y-auto px-6 py-6"
+        className="flex-1 space-y-4 overflow-y-auto px-3 py-4 sm:px-6 sm:py-6"
       >
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center py-12 text-center">
@@ -97,7 +97,7 @@ export function AIChat({
               )}
               <div
                 className={cn(
-                  "max-w-[80%] rounded-xl px-4 py-3",
+                  "max-w-[min(100%,28rem)] rounded-xl px-3 py-2.5 sm:max-w-[80%] sm:px-4 sm:py-3",
                   message.role === "user"
                     ? "bg-primary text-background"
                     : "depth-panel border-0"
@@ -152,14 +152,14 @@ export function AIChat({
         )}
       </div>
 
-      <div className="border-t border-white/[0.06] bg-black/20 px-6 py-4">
+      <div className="shrink-0 border-t border-white/[0.06] bg-black/20 px-3 py-3 sm:px-6 sm:py-4">
         {messages.length > 0 && (
-          <div className="mb-3 flex gap-2 overflow-x-auto pb-1">
+          <div className="mb-2 flex gap-2 overflow-x-auto pb-1 sm:mb-3">
             {SUGGESTED_PROMPTS.slice(4).map((prompt) => (
               <button
                 key={prompt}
                 onClick={() => onSuggestionClick(prompt)}
-                className="shrink-0 rounded-lg border border-white/[0.06] px-3 py-1 font-mono text-[11px] text-muted-foreground transition-colors hover:border-primary/30 hover:text-foreground"
+                className="shrink-0 rounded-lg border border-white/[0.06] px-3 py-1.5 font-mono text-[11px] text-muted-foreground transition-colors hover:border-primary/30 hover:text-foreground"
               >
                 {prompt}
               </button>
@@ -173,18 +173,19 @@ export function AIChat({
             onChange={(e) => onInputChange(e.target.value)}
             onKeyDown={handleKeyDown}
             disabled={isLoading}
-            className="flex-1"
+            className="min-h-11 flex-1 text-base sm:min-h-10 sm:text-sm"
           />
           <Button
             onClick={onSend}
             disabled={isLoading || !input.trim()}
             size="icon"
+            className="h-11 w-11 shrink-0 sm:h-10 sm:w-10"
           >
             <Send className="h-4 w-4" />
           </Button>
         </div>
-        <p className="mt-2 text-center font-mono text-[10px] text-muted-foreground/70">
-          Plans are advisory · Policy engine executes · Sphere SDK settles
+        <p className="mt-2 hidden text-center font-mono text-[10px] text-muted-foreground/70 sm:block">
+          Plans advisory · Policy executes · Astrid gates · Sphere settles
         </p>
       </div>
     </div>

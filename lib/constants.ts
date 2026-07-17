@@ -62,4 +62,5 @@ export const NAV_ITEMS = [
   { href: "/activity", label: "Agent Activity", icon: "Activity" },
   { href: "/payments", label: "Payments", icon: "ArrowLeftRight" },
   { href: "/reports", label: "Reports", icon: "BarChart3" },
+  { href: "/agent", label: "Agent Runtime", icon: "Box" },
 ] as const;

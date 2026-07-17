@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Sidebar } from "@/components/layout/Sidebar";
+import { MobileNav } from "@/components/layout/MobileNav";
 import { CommandPalette } from "@/components/layout/CommandPalette";
 import { SimulationBanner } from "@/components/layout/SimulationBanner";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
@@ -9,6 +10,7 @@ import { useTreasury } from "@/hooks/use-treasury";
 import { useRouter } from "next/navigation";
 import { Menu, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Logo } from "@/components/ui/logo";
 
 export default function DashboardLayout({
   children,
@@ -28,7 +30,7 @@ export default function DashboardLayout({
   };
 
   return (
-    <div className="app-mesh flex h-screen overflow-hidden">
+    <div className="app-mesh flex h-[100dvh] overflow-hidden">
       <div className="app-grid pointer-events-none fixed inset-0 opacity-30" />
 
       <div className="relative hidden lg:block">
@@ -40,33 +42,40 @@ export default function DashboardLayout({
       </div>
 
       {sidebarOpen && (
-        <div className="fixed inset-0 z-40 lg:hidden">
+        <div className="fixed inset-0 z-50 lg:hidden">
           <div
             className="absolute inset-0 bg-black/70 backdrop-blur-sm"
             onClick={() => setSidebarOpen(false)}
           />
-          <div className="relative z-10 h-full w-[260px]">
+          <div className="relative z-10 h-full w-[min(280px,85vw)] shadow-2xl">
             <Sidebar
               identity={identity}
               isLive={isLive}
               onDisconnect={handleDisconnect}
+              onNavigate={() => setSidebarOpen(false)}
             />
           </div>
         </div>
       )}
 
-      <div className="relative flex flex-1 flex-col overflow-hidden">
+      <div className="relative flex min-w-0 flex-1 flex-col overflow-hidden">
         <SimulationBanner />
-        <header className="flex h-14 items-center justify-between border-b border-white/[0.06] px-4 lg:px-6">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="lg:hidden"
-            onClick={() => setSidebarOpen(true)}
-          >
-            <Menu className="h-5 w-5" />
-          </Button>
-          <div className="hidden lg:block" />
+        <header className="flex h-12 shrink-0 items-center justify-between gap-2 border-b border-white/[0.06] px-3 sm:h-14 sm:px-4 lg:px-6">
+          <div className="flex min-w-0 items-center gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="shrink-0 lg:hidden"
+              onClick={() => setSidebarOpen(true)}
+              aria-label="Open menu"
+            >
+              <Menu className="h-5 w-5" />
+            </Button>
+            <div className="min-w-0 lg:hidden">
+              <Logo size="sm" showWordmark={false} />
+            </div>
+            <div className="hidden lg:block" />
+          </div>
           <Button
             variant="outline"
             size="sm"
@@ -80,9 +89,12 @@ export default function DashboardLayout({
             </kbd>
           </Button>
         </header>
-        <main className="relative flex-1 overflow-y-auto">
-          <div className="mx-auto max-w-[1400px] p-6 lg:p-8">{children}</div>
+        <main className="relative flex-1 overflow-y-auto overflow-x-hidden">
+          <div className="mx-auto max-w-[1400px] px-3 pb-24 pt-4 sm:px-5 sm:pb-10 sm:pt-6 lg:p-8 lg:pb-8">
+            {children}
+          </div>
         </main>
+        <MobileNav />
       </div>
 
       <CommandPalette open={commandOpen} onOpenChange={setCommandOpen} />

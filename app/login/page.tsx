@@ -91,28 +91,28 @@ export default function LoginPage() {
         </p>
       </div>
 
-      <div className="relative flex flex-1 items-center justify-center px-6 py-12">
+      <div className="relative flex flex-1 items-center justify-center px-4 py-10 sm:px-6 sm:py-12">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           className="w-full max-w-md"
         >
-          <div className="mb-8 lg:hidden">
+          <div className="mb-6 sm:mb-8 lg:hidden">
             <Link href="/">
               <Logo />
             </Link>
           </div>
 
           <DepthCard glow tilt={false}>
-            <div className="p-8">
-              <h2 className="font-display text-2xl font-semibold">
+            <div className="p-5 sm:p-8">
+              <h2 className="font-display text-xl font-semibold sm:text-2xl">
                 Authenticate
               </h2>
               <p className="mt-2 text-sm text-muted-foreground">
                 Sphere Connect — keys never leave your wallet
               </p>
 
-              <div className="mt-8 space-y-3">
+              <div className="mt-6 space-y-3 sm:mt-8">
                 <Button
                   className="h-12 w-full"
                   size="lg"
@@ -128,7 +128,7 @@ export default function LoginPage() {
                 </Button>
                 <Button
                   variant="outline"
-                  className="h-11 w-full"
+                  className="h-12 w-full sm:h-11"
                   onClick={handleDemo}
                 >
                   Continue in Demo Mode
@@ -136,7 +136,7 @@ export default function LoginPage() {
               </div>
 
               <p className="mt-6 text-center font-mono text-[11px] text-muted-foreground">
-                network_id: 4 · testnet2
+                network_id: 4 · testnet2 · Astrid gates
               </p>
             </div>
           </DepthCard>

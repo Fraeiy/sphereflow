@@ -9,10 +9,10 @@ import { DepthCard } from "@/components/ui/depth-card";
 
 export function Hero() {
   return (
-    <section className="relative min-h-[92vh] overflow-hidden px-6 pb-20 pt-28">
+    <section className="relative min-h-[92vh] overflow-hidden px-4 pb-16 pt-24 sm:px-6 sm:pb-20 sm:pt-28">
       <div className="app-grid pointer-events-none absolute inset-0 opacity-60" />
 
-      <div className="relative mx-auto grid max-w-6xl items-center gap-16 lg:grid-cols-[1.1fr_0.9fr]">
+      <div className="relative mx-auto grid max-w-6xl items-center gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
         <motion.div
           initial={{ opacity: 0, x: -24 }}
           animate={{ opacity: 1, x: 0 }}
@@ -21,32 +21,31 @@ export function Hero() {
           <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-primary/90">
             Unicity Epoch Four
           </p>
-          <h1 className="mt-4 font-display text-5xl font-semibold leading-[1.05] tracking-tight sm:text-6xl lg:text-[4rem]">
+          <h1 className="mt-4 font-display text-[2.15rem] font-semibold leading-[1.08] tracking-tight sm:text-5xl md:text-6xl lg:text-[4rem]">
             Autonomous treasury
             <span className="mt-1 block text-gradient-gold">
               for Sphere agents
             </span>
           </h1>
-          <p className="mt-6 max-w-lg text-base leading-relaxed text-muted-foreground">
-            Financial mandates in natural language. Deterministic policy
-            execution. On-chain settlement through Sphere SDK — built for
-            production treasury operations, not demos.
+          <p className="mt-5 max-w-lg text-sm leading-relaxed text-muted-foreground sm:mt-6 sm:text-base">
+            Financial mandates in natural language. Astrid-aligned capability
+            gates. Deterministic policy execution and Sphere SDK settlement.
           </p>
-          <div className="mt-10 flex flex-wrap items-center gap-4">
-            <Button asChild size="lg">
+          <div className="mt-8 flex w-full flex-col gap-3 sm:mt-10 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
+            <Button asChild size="lg" className="w-full sm:w-auto">
               <Link href="/login">
                 Connect Wallet
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
-            <Button asChild variant="outline" size="lg">
+            <Button asChild variant="outline" size="lg" className="w-full sm:w-auto">
               <Link href="/dashboard">Explore Dashboard</Link>
             </Button>
           </div>
-          <dl className="mt-14 grid grid-cols-3 gap-6 border-t border-white/[0.06] pt-8">
+          <dl className="mt-10 grid grid-cols-3 gap-3 border-t border-white/[0.06] pt-6 sm:mt-14 sm:gap-6 sm:pt-8">
             {[
               { label: "Settlement", value: "Sphere SDK" },
-              { label: "Execution", value: "Policy Engine" },
+              { label: "Safety", value: "Astrid gates" },
               { label: "Network", value: "testnet2" },
             ].map((item) => (
               <div key={item.label}>

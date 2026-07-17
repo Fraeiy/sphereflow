@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono, Syne } from "next/font/google";
 import { AppProviders } from "@/components/providers/app-providers";
 import { ExtensionGuard } from "@/components/providers/extension-guard";
@@ -31,11 +31,20 @@ export const metadata: Metadata = {
   keywords: [
     "Unicity",
     "Sphere",
+    "Astrid",
     "Treasury",
     "AI Agent",
     "UCT",
     "Autonomous Finance",
   ],
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  viewportFit: "cover",
+  themeColor: "#070708",
 };
 
 export default function RootLayout({

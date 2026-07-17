@@ -10,6 +10,7 @@ import {
   Activity,
   ArrowLeftRight,
   BarChart3,
+  Box,
   Search,
 } from "lucide-react";
 import { NAV_ITEMS } from "@/lib/constants";
@@ -21,6 +22,7 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   Activity,
   ArrowLeftRight,
   BarChart3,
+  Box,
 };
 
 interface CommandPaletteProps {

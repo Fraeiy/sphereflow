@@ -10,6 +10,7 @@ import {
   Activity,
   ArrowLeftRight,
   BarChart3,
+  Box,
   LogOut,
 } from "lucide-react";
 import { NAV_ITEMS } from "@/lib/constants";
@@ -25,24 +26,31 @@ const iconMap = {
   Activity,
   ArrowLeftRight,
   BarChart3,
+  Box,
 };
 
 interface SidebarProps {
   identity: WalletIdentity | null;
   isLive?: boolean;
   onDisconnect?: () => void;
+  onNavigate?: () => void;
 }
 
-export function Sidebar({ identity, isLive, onDisconnect }: SidebarProps) {
+export function Sidebar({
+  identity,
+  isLive,
+  onDisconnect,
+  onNavigate,
+}: SidebarProps) {
   const pathname = usePathname();
 
   return (
-    <aside className="flex h-full w-[260px] flex-col border-r border-white/[0.06] bg-[#0a0a0c]/90 backdrop-blur-xl">
-      <div className="border-b border-white/[0.06] px-5 py-5">
+    <aside className="flex h-full w-[min(280px,85vw)] flex-col border-r border-white/[0.06] bg-[#0a0a0c]/95 backdrop-blur-xl sm:w-[260px]">
+      <div className="border-b border-white/[0.06] px-4 py-4 sm:px-5 sm:py-5">
         <Logo size="sm" />
       </div>
 
-      <nav className="flex-1 space-y-1 p-3">
+      <nav className="flex-1 space-y-0.5 overflow-y-auto p-2 sm:p-3">
         {NAV_ITEMS.map((item) => {
           const Icon = iconMap[item.icon as keyof typeof iconMap];
           const isActive = pathname === item.href;
@@ -51,8 +59,9 @@ export function Sidebar({ identity, isLive, onDisconnect }: SidebarProps) {
             <Link
               key={item.href}
               href={item.href}
+              onClick={onNavigate}
               className={cn(
-                "group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] font-medium transition-all duration-200",
+                "group relative flex min-h-[44px] items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] font-medium transition-all duration-200",
                 isActive
                   ? "text-foreground"
                   : "text-muted-foreground hover:bg-white/[0.04] hover:text-foreground"
@@ -67,8 +76,10 @@ export function Sidebar({ identity, isLive, onDisconnect }: SidebarProps) {
               )}
               <Icon
                 className={cn(
-                  "relative z-[1] h-4 w-4",
-                  isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground"
+                  "relative z-[1] h-4 w-4 shrink-0",
+                  isActive
+                    ? "text-primary"
+                    : "text-muted-foreground group-hover:text-foreground"
                 )}
               />
               <span className="relative z-[1]">{item.label}</span>
@@ -77,10 +88,10 @@ export function Sidebar({ identity, isLive, onDisconnect }: SidebarProps) {
         })}
       </nav>
 
-      <div className="border-t border-white/[0.06] p-4">
+      <div className="border-t border-white/[0.06] p-3 sm:p-4">
         {identity ? (
           <div className="space-y-3">
-            <div className="depth-panel rounded-xl p-3.5">
+            <div className="depth-panel rounded-xl p-3 sm:p-3.5">
               <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
                 Session
               </p>
@@ -97,7 +108,7 @@ export function Sidebar({ identity, isLive, onDisconnect }: SidebarProps) {
             {onDisconnect && (
               <button
                 onClick={onDisconnect}
-                className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-[13px] text-muted-foreground transition-colors hover:bg-white/[0.04] hover:text-foreground"
+                className="flex min-h-[44px] w-full items-center gap-2 rounded-xl px-3 py-2.5 text-[13px] text-muted-foreground transition-colors hover:bg-white/[0.04] hover:text-foreground"
               >
                 <LogOut className="h-4 w-4" />
                 Disconnect
@@ -107,7 +118,8 @@ export function Sidebar({ identity, isLive, onDisconnect }: SidebarProps) {
         ) : (
           <Link
             href="/login"
-            className="flex w-full items-center justify-center rounded-xl bg-gradient-to-b from-[#f0b429] to-[#c98a0f] px-3 py-2.5 text-sm font-semibold text-zinc-950 shadow-lg transition hover:brightness-105"
+            onClick={onNavigate}
+            className="flex min-h-[44px] w-full items-center justify-center rounded-xl bg-gradient-to-b from-[#f0b429] to-[#c98a0f] px-3 py-2.5 text-sm font-semibold text-zinc-950 shadow-lg transition hover:brightness-105"
           >
             Connect Wallet
           </Link>

@@ -17,6 +17,7 @@ import { generateFallbackPlan } from "@/ai/fallback";
 import { generateId } from "@/lib/utils";
 import type { ChatMessage } from "@/types/treasury";
 import { executeSphereTransfer } from "@/sphere/client";
+import { authorizeAction, authorizePlan } from "@/lib/astrid/authorize";
 
 export default function ChatPage() {
   const {
@@ -40,6 +41,17 @@ export default function ChatPage() {
   const processPlan = useCallback(
     async (plan: NonNullable<ChatMessage["plan"]>, assistantContent: string) => {
       if (!policy || !snapshot) return;
+
+      const gate = authorizePlan(userId, plan.action, {
+        amount: plan.payment?.amount,
+        recipient: plan.payment?.recipient,
+        summary: plan.message || `Agent plan: ${plan.action}`,
+      });
+
+      if (!gate.allowed) {
+        toast.error(gate.reason ?? "Astrid capability denied this plan");
+        return;
+      }
 
       const res = await fetch("/api/execute-plan", {
         method: "POST",
@@ -74,21 +86,36 @@ export default function ChatPage() {
           connection &&
           result.payment.type === "instant"
         ) {
-          const transfer = await executeSphereTransfer(connection.client, {
-            recipient: result.payment.recipient,
+          const sendGate = authorizeAction(userId, {
+            capability: "payment:send",
+            action: "settle_payment",
+            summary: `Settle ${result.payment.amount} UCT to ${result.payment.recipient}`,
             amount: result.payment.amount,
-            memo: result.payment.memo,
+            recipient: result.payment.recipient,
           });
 
-          if (transfer.success) {
-            result.payment.status = "completed";
-            result.payment.executedAt = new Date().toISOString();
-            result.payment.transferId = transfer.transferId;
-            result.payment.deliveryPending = transfer.deliveryPending;
-            savePayment(result.payment);
-            toast.success("Payment settled via Sphere SDK");
+          if (!sendGate.allowed) {
+            toast.info(
+              sendGate.reason ??
+                "Settlement held — approve manually under Payments"
+            );
           } else {
-            toast.error(transfer.error ?? "Sphere settlement failed");
+            const transfer = await executeSphereTransfer(connection.client, {
+              recipient: result.payment.recipient,
+              amount: result.payment.amount,
+              memo: result.payment.memo,
+            });
+
+            if (transfer.success) {
+              result.payment.status = "completed";
+              result.payment.executedAt = new Date().toISOString();
+              result.payment.transferId = transfer.transferId;
+              result.payment.deliveryPending = transfer.deliveryPending;
+              savePayment(result.payment);
+              toast.success("Payment settled via Sphere SDK");
+            } else {
+              toast.error(transfer.error ?? "Sphere settlement failed");
+            }
           }
         }
       }
@@ -233,17 +260,17 @@ export default function ChatPage() {
   );
 
   return (
-    <div className="flex h-[calc(100vh-7rem)] flex-col -mx-6 -mt-6 lg:-mx-8 lg:-mt-8">
-      <div className="border-b border-white/[0.06] px-6 py-5 lg:px-8">
+    <div className="-mx-3 -mt-4 flex h-[calc(100dvh-7.5rem)] flex-col sm:-mx-5 sm:-mt-6 sm:h-[calc(100dvh-8rem)] lg:-mx-8 lg:-mt-8 lg:h-[calc(100dvh-7rem)]">
+      <div className="shrink-0 border-b border-white/[0.06] px-3 py-4 sm:px-6 sm:py-5 lg:px-8">
         <p className="section-label">Agent Interface</p>
-        <h1 className="mt-1 font-display text-2xl font-semibold tracking-tight">
+        <h1 className="mt-1 font-display text-xl font-semibold tracking-tight sm:text-2xl">
           Treasury Chat
         </h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Mandates compile to policy — execution stays deterministic
+        <p className="mt-1 text-sm text-muted-foreground sm:mt-2">
+          Mandates compile to policy — Astrid gates enforce capabilities
         </p>
       </div>
-      <div className="flex-1 overflow-hidden">
+      <div className="min-h-0 flex-1 overflow-hidden">
         <AIChat
           messages={messages}
           input={input}

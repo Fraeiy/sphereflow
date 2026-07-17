@@ -18,6 +18,7 @@ import { executeSphereTransfer } from "@/sphere/client";
 import { formatUCT } from "@/lib/amounts";
 import { generateId } from "@/lib/utils";
 import { cn } from "@/lib/utils";
+import { authorizeAction } from "@/lib/astrid/authorize";
 import type { Payment, PaymentStatus, PaymentType } from "@/types/treasury";
 
 type Filter = "all" | PaymentStatus;
@@ -45,6 +46,18 @@ export default function PaymentsPage() {
     scheduledAt?: string;
   }) => {
     if (!policy || !snapshot) return;
+
+    const createGate = authorizeAction(userId, {
+      capability: "payment:create",
+      action: "create_payment",
+      summary: `Create ${data.amount} UCT payment to ${data.recipient}`,
+      amount: data.amount,
+      recipient: data.recipient,
+    });
+    if (!createGate.allowed) {
+      toast.error(createGate.reason ?? "Astrid capability denied payment create");
+      return;
+    }
 
     const validation = validatePayment(data, policy, snapshot);
     if (!validation.valid) {
@@ -77,26 +90,40 @@ export default function PaymentsPage() {
     setPayments((prev) => [payment, ...prev]);
 
     if (autoApprove && data.type === "instant" && connection) {
-      const transfer = await executeSphereTransfer(connection.client, {
-        recipient: data.recipient,
+      const sendGate = authorizeAction(userId, {
+        capability: "payment:send",
+        action: "settle_payment",
+        summary: `Settle ${data.amount} UCT to ${data.recipient}`,
         amount: data.amount,
-        memo: data.memo,
+        recipient: data.recipient,
       });
 
-      if (transfer.success) {
-        const updated = updatePayment(userId, payment.id, {
-          status: "completed",
-          executedAt: new Date().toISOString(),
-          transferId: transfer.transferId,
-          deliveryPending: transfer.deliveryPending,
-        });
-        if (updated)
-          setPayments((prev) =>
-            prev.map((p) => (p.id === payment.id ? updated : p))
-          );
-        toast.success("Payment settled via Sphere SDK");
+      if (!sendGate.allowed) {
+        toast.info(
+          sendGate.reason ?? "Held for approval — Astrid amount threshold"
+        );
       } else {
-        toast.error(transfer.error ?? "Settlement failed");
+        const transfer = await executeSphereTransfer(connection.client, {
+          recipient: data.recipient,
+          amount: data.amount,
+          memo: data.memo,
+        });
+
+        if (transfer.success) {
+          const updated = updatePayment(userId, payment.id, {
+            status: "completed",
+            executedAt: new Date().toISOString(),
+            transferId: transfer.transferId,
+            deliveryPending: transfer.deliveryPending,
+          });
+          if (updated)
+            setPayments((prev) =>
+              prev.map((p) => (p.id === payment.id ? updated : p))
+            );
+          toast.success("Payment settled via Sphere SDK");
+        } else {
+          toast.error(transfer.error ?? "Settlement failed");
+        }
       }
     } else if (autoApprove) {
       toast.success("Payment approved — connect wallet for Sphere settlement");
@@ -110,6 +137,32 @@ export default function PaymentsPage() {
   const handleApprove = async (payment: Payment) => {
     if (!connection) {
       toast.error("Connect Sphere wallet to settle payments");
+      return;
+    }
+
+    const approveGate = authorizeAction(userId, {
+      capability: "payment:approve",
+      action: "approve_payment",
+      summary: `Approve ${payment.amount} UCT to ${payment.recipient}`,
+      amount: payment.amount,
+      recipient: payment.recipient,
+    });
+    if (!approveGate.allowed && approveGate.status === "denied") {
+      toast.error(approveGate.reason ?? "Approve capability denied");
+      return;
+    }
+
+    const sendGate = authorizeAction(userId, {
+      capability: "payment:send",
+      action: "settle_payment",
+      summary: `Settle ${payment.amount} UCT to ${payment.recipient}`,
+      amount: payment.amount,
+      recipient: payment.recipient,
+      metadata: { manualApproval: true },
+    });
+    // Manual approve intentionally overrides amount gate when user clicks Approve
+    if (!sendGate.allowed && sendGate.status === "denied") {
+      toast.error(sendGate.reason ?? "Send capability denied");
       return;
     }
 
@@ -186,10 +239,10 @@ export default function PaymentsPage() {
           {pending.map((payment) => (
             <div
               key={payment.id}
-              className="depth-panel flex items-center justify-between rounded-2xl p-4"
+              className="depth-panel flex flex-col gap-3 rounded-2xl p-4 sm:flex-row sm:items-center sm:justify-between"
             >
-              <div>
-                <p className="font-mono text-sm font-medium tabular-nums">
+              <div className="min-w-0">
+                <p className="break-all font-mono text-sm font-medium tabular-nums">
                   {formatUCT(payment.amount)}
                   <span className="mx-2 text-muted-foreground">→</span>
                   {payment.recipient}
@@ -200,11 +253,11 @@ export default function PaymentsPage() {
                   </p>
                 )}
               </div>
-              <div className="flex gap-2">
+              <div className="flex shrink-0 gap-2">
                 <Button
                   size="sm"
                   variant="outline"
-                  className="gap-1 border-emerald-500/30 text-emerald-400"
+                  className="min-h-10 flex-1 gap-1 border-emerald-500/30 text-emerald-400 sm:flex-none"
                   onClick={() => handleApprove(payment)}
                 >
                   <Check className="h-3 w-3" />
@@ -213,7 +266,7 @@ export default function PaymentsPage() {
                 <Button
                   size="sm"
                   variant="outline"
-                  className="gap-1 border-red-500/30 text-red-400"
+                  className="min-h-10 flex-1 gap-1 border-red-500/30 text-red-400 sm:flex-none"
                   onClick={() => handleReject(payment)}
                 >
                   <X className="h-3 w-3" />
