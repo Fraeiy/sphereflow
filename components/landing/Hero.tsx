@@ -1,18 +1,63 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { SceneOrb } from "@/components/ui/scene-orb";
 import { DepthCard } from "@/components/ui/depth-card";
+import { SPHEREFLOW_FERRO_COLORS } from "@/components/ui/ferrofluid";
+
+const Ferrofluid = dynamic(
+  () => import("@/components/ui/ferrofluid").then((m) => m.Ferrofluid),
+  {
+    ssr: false,
+    loading: () => (
+      <div
+        className="h-full w-full"
+        style={{
+          background:
+            "radial-gradient(ellipse 70% 55% at 50% 35%, rgba(232,163,23,0.14), transparent 65%), #070708",
+        }}
+      />
+    ),
+  }
+);
 
 export function Hero() {
   return (
     <section className="relative min-h-[92vh] overflow-hidden px-4 pb-16 pt-24 sm:px-6 sm:pb-20 sm:pt-28">
-      <div className="app-grid pointer-events-none absolute inset-0 opacity-60" />
+      {/* Optimized Ferrofluid — SphereFlow gold palette */}
+      <div className="absolute inset-0 z-0">
+        <Ferrofluid
+          className="h-full w-full"
+          colors={[...SPHEREFLOW_FERRO_COLORS]}
+          backgroundColor="#070708"
+          speed={0.32}
+          scale={1.4}
+          turbulence={0.8}
+          fluidity={0.14}
+          rimWidth={0.17}
+          sharpness={2.6}
+          shimmer={0.85}
+          glow={1.55}
+          flowDirection="down"
+          opacity={0.7}
+          mouseInteraction
+          mouseStrength={0.8}
+          mouseRadius={0.28}
+          mouseDampening={0.22}
+          mixBlendMode="screen"
+          targetFps={28}
+          maxDpr={1.15}
+        />
+        {/* Soft vignette so text stays readable */}
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#070708]/50 via-[#070708]/45 to-[#070708]" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,#070708_85%)] opacity-70" />
+        <div className="app-grid pointer-events-none absolute inset-0 opacity-25" />
+      </div>
 
-      <div className="relative mx-auto grid max-w-6xl items-center gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
+      <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
         <motion.div
           initial={{ opacity: 0, x: -24 }}
           animate={{ opacity: 1, x: 0 }}
@@ -38,7 +83,12 @@ export function Hero() {
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
-            <Button asChild variant="outline" size="lg" className="w-full sm:w-auto">
+            <Button
+              asChild
+              variant="outline"
+              size="lg"
+              className="w-full border-white/15 bg-black/40 backdrop-blur-sm sm:w-auto"
+            >
               <Link href="/dashboard">Explore Dashboard</Link>
             </Button>
           </div>
@@ -61,7 +111,6 @@ export function Hero() {
         </motion.div>
 
         <div className="relative flex items-center justify-center lg:justify-end">
-          <SceneOrb size="lg" className="absolute -right-8 opacity-90" />
           <motion.div
             className="relative z-10 w-full max-w-md"
             initial={{ opacity: 0, y: 32 }}
