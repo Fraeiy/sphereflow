@@ -1,6 +1,7 @@
 "use client";
 
 import { DepthCard } from "@/components/ui/depth-card";
+import { SpotlightCard } from "@/components/react-bits";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { cn, formatUCT } from "@/lib/utils";
@@ -49,50 +50,55 @@ export function PolicyCard({
       )}
       innerClassName="h-full"
     >
-      <div
-        className="flex h-full flex-col p-5"
-        onClick={editable ? onEdit : undefined}
-        onKeyDown={
-          editable
-            ? (e) => {
-                if (e.key === "Enter" || e.key === " ") onEdit?.();
-              }
-            : undefined
-        }
-        role={editable ? "button" : undefined}
-        tabIndex={editable ? 0 : undefined}
+      <SpotlightCard
+        className="h-full rounded-2xl"
+        spotlightColor="rgba(232, 163, 23, 0.14)"
       >
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-muted-foreground">
-              {title}
-            </p>
-            <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
-              {description}
-            </p>
+        <div
+          className="flex h-full flex-col p-4 sm:p-5"
+          onClick={editable ? onEdit : undefined}
+          onKeyDown={
+            editable
+              ? (e) => {
+                  if (e.key === "Enter" || e.key === " ") onEdit?.();
+                }
+              : undefined
+          }
+          role={editable ? "button" : undefined}
+          tabIndex={editable ? 0 : undefined}
+        >
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-muted-foreground">
+                {title}
+              </p>
+              <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
+                {description}
+              </p>
+            </div>
+            {onToggle && (
+              <Switch
+                checked={enabled}
+                onCheckedChange={onToggle}
+                onClick={(e) => e.stopPropagation()}
+              />
+            )}
           </div>
-          {onToggle && (
-            <Switch
-              checked={enabled}
-              onCheckedChange={onToggle}
-              onClick={(e) => e.stopPropagation()}
-            />
-          )}
+          <div className="mt-auto flex items-end justify-between gap-2 pt-5">
+            <Badge
+              variant={enabled ? "default" : "secondary"}
+              className={cn(isNumeric && "font-mono tabular-nums")}
+            >
+              {displayValue()}
+            </Badge>
+            {editable && (
+              <span className="text-[10px] uppercase tracking-wider text-muted-foreground/70">
+                Edit
+              </span>
+            )}
+          </div>
         </div>
-        <div className="mt-auto flex items-end justify-between gap-2 pt-5">
-          <Badge
-            variant={enabled ? "default" : "secondary"}
-            className={cn(isNumeric && "font-mono tabular-nums")}
-          >
-            {displayValue()}
-          </Badge>
-          {editable && (
-            <span className="text-[10px] uppercase tracking-wider text-muted-foreground/70">
-              Edit
-            </span>
-          )}
-        </div>
-      </div>
+      </SpotlightCard>
     </DepthCard>
   );
 }

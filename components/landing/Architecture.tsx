@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { ShinyText } from "@/components/react-bits";
 
 const steps = [
   { label: "Operator", sub: "Financial mandate" },
@@ -16,9 +17,13 @@ export function Architecture() {
     <section className="border-y border-white/[0.06] bg-white/[0.01] px-4 py-16 sm:px-6 sm:py-28">
       <div className="mx-auto max-w-5xl">
         <div className="text-center">
-          <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-primary/80">
-            Architecture
-          </p>
+          <ShinyText
+            text="Architecture"
+            className="text-[11px] font-medium uppercase tracking-[0.28em]"
+            speed={4}
+            color="rgba(232,163,23,0.75)"
+            shineColor="#f5d061"
+          />
           <h2 className="mt-3 font-display text-2xl font-semibold tracking-tight sm:text-3xl">
             LLM plans. Astrid gates. Policy executes.
           </h2>

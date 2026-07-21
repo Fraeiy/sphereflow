@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { ShinyText } from "@/components/react-bits";
 
 interface PageHeaderProps {
   title: string;
@@ -23,7 +24,13 @@ export function PageHeader({
       )}
     >
       <div className="min-w-0">
-        <p className="section-label">{eyebrow}</p>
+        <ShinyText
+          text={eyebrow}
+          className="text-[11px] font-medium uppercase tracking-[0.24em]"
+          speed={4}
+          color="rgba(232,163,23,0.75)"
+          shineColor="#f5d061"
+        />
         <h1 className="mt-1 font-display text-xl font-semibold tracking-tight text-foreground sm:text-2xl lg:text-3xl">
           {title}
         </h1>

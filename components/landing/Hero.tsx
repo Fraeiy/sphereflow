@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DepthCard } from "@/components/ui/depth-card";
+import { Magnet, ShinyText } from "@/components/react-bits";
 
 const Ferrofluid = dynamic(
   () => import("@/components/ui/ferrofluid").then((m) => m.Ferrofluid),
@@ -63,9 +64,13 @@ export function Hero() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
         >
-          <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-primary/90">
-            Unicity Epoch Four
-          </p>
+          <ShinyText
+            text="Unicity · Sphere · Astrid"
+            className="text-[11px] font-medium uppercase tracking-[0.28em]"
+            speed={3.5}
+            color="rgba(232,163,23,0.85)"
+            shineColor="#f5d061"
+          />
           <h1 className="mt-4 font-display text-[2.15rem] font-semibold leading-[1.08] tracking-tight sm:text-5xl md:text-6xl lg:text-[4rem]">
             Autonomous treasury
             <span className="mt-1 block text-gradient-gold">
@@ -77,20 +82,24 @@ export function Hero() {
             gates. Deterministic policy execution and Sphere SDK settlement.
           </p>
           <div className="mt-8 flex w-full flex-col gap-3 sm:mt-10 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
-            <Button asChild size="lg" className="w-full sm:w-auto">
-              <Link href="/login">
-                Connect Wallet
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-            </Button>
-            <Button
-              asChild
-              variant="outline"
-              size="lg"
-              className="w-full border-white/15 bg-black/50 backdrop-blur-sm sm:w-auto"
-            >
-              <Link href="/dashboard">Explore Dashboard</Link>
-            </Button>
+            <Magnet magnetStrength={4} padding={50} wrapperClassName="w-full sm:w-auto">
+              <Button asChild size="lg" className="w-full sm:w-auto">
+                <Link href="/login">
+                  Connect Wallet
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </Button>
+            </Magnet>
+            <Magnet magnetStrength={5} padding={40} wrapperClassName="w-full sm:w-auto">
+              <Button
+                asChild
+                variant="outline"
+                size="lg"
+                className="w-full border-white/15 bg-black/50 backdrop-blur-sm sm:w-auto"
+              >
+                <Link href="/dashboard">Explore Dashboard</Link>
+              </Button>
+            </Magnet>
           </div>
           <dl className="mt-10 grid grid-cols-3 gap-3 border-t border-white/[0.06] pt-6 sm:mt-14 sm:gap-6 sm:pt-8">
             {[

@@ -12,6 +12,7 @@ import { SceneOrb } from "@/components/ui/scene-orb";
 import { useTreasury } from "@/hooks/use-treasury";
 import { willAutoConnect } from "@/sphere/client";
 import { toast } from "sonner";
+import { Magnet, SpotlightCard } from "@/components/react-bits";
 
 export default function LoginPage() {
   const { connect, isConnecting, identity, isLive, enterDemoMode } =
@@ -104,41 +105,48 @@ export default function LoginPage() {
           </div>
 
           <DepthCard glow tilt={false}>
-            <div className="p-5 sm:p-8">
-              <h2 className="font-display text-xl font-semibold sm:text-2xl">
-                Authenticate
-              </h2>
-              <p className="mt-2 text-sm text-muted-foreground">
-                Sphere Connect — keys never leave your wallet
-              </p>
+            <SpotlightCard
+              className="rounded-2xl"
+              spotlightColor="rgba(232, 163, 23, 0.16)"
+            >
+              <div className="p-5 sm:p-8">
+                <h2 className="font-display text-xl font-semibold sm:text-2xl">
+                  Authenticate
+                </h2>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  Sphere Connect — keys never leave your wallet
+                </p>
 
-              <div className="mt-6 space-y-3 sm:mt-8">
-                <Button
-                  className="h-12 w-full"
-                  size="lg"
-                  onClick={handleConnect}
-                  disabled={isConnecting}
-                >
-                  {isConnecting ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <Wallet className="h-4 w-4" />
-                  )}
-                  Connect Sphere Wallet
-                </Button>
-                <Button
-                  variant="outline"
-                  className="h-12 w-full sm:h-11"
-                  onClick={handleDemo}
-                >
-                  Continue in Demo Mode
-                </Button>
+                <div className="mt-6 space-y-3 sm:mt-8">
+                  <Magnet wrapperClassName="w-full" magnetStrength={5} padding={40}>
+                    <Button
+                      className="h-12 w-full"
+                      size="lg"
+                      onClick={handleConnect}
+                      disabled={isConnecting}
+                    >
+                      {isConnecting ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <Wallet className="h-4 w-4" />
+                      )}
+                      Connect Sphere Wallet
+                    </Button>
+                  </Magnet>
+                  <Button
+                    variant="outline"
+                    className="h-12 w-full sm:h-11"
+                    onClick={handleDemo}
+                  >
+                    Continue in Demo Mode
+                  </Button>
+                </div>
+
+                <p className="mt-6 text-center font-mono text-[11px] text-muted-foreground">
+                  network_id: 4 · testnet2 · Astrid gates
+                </p>
               </div>
-
-              <p className="mt-6 text-center font-mono text-[11px] text-muted-foreground">
-                network_id: 4 · testnet2 · Astrid gates
-              </p>
-            </div>
+            </SpotlightCard>
           </DepthCard>
         </motion.div>
       </div>

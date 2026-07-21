@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/ui/logo";
+import { Magnet } from "@/components/react-bits";
 
 const links = [
   { href: "#features", label: "Capabilities" },
@@ -37,9 +38,11 @@ export function Navbar() {
             <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
               <Link href="/dashboard">Dashboard</Link>
             </Button>
-            <Button asChild size="sm">
-              <Link href="/login">Connect</Link>
-            </Button>
+            <Magnet magnetStrength={5} padding={36}>
+              <Button asChild size="sm">
+                <Link href="/login">Connect</Link>
+              </Button>
+            </Magnet>
             <Button
               variant="ghost"
               size="icon"
