@@ -22,8 +22,8 @@ export function CTA() {
               Deploy your autonomous treasury
             </h2>
             <p className="relative mx-auto mt-4 max-w-lg text-muted-foreground">
-              Built for the Unicity Epoch Four Builder Program. Production
-              architecture, real Sphere settlement.
+              Production architecture with policy enforcement and real Sphere
+              settlement.
             </p>
             <Button asChild size="lg" className="relative mt-8">
               <Link href="/login">
