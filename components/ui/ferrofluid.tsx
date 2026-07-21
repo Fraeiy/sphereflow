@@ -308,8 +308,8 @@ export function Ferrofluid({
       renderer = new Renderer({
         dpr: resolvedDpr,
         alpha: true,
-        antialias: false, // cheaper, soft edges from shader
-        powerPreference: "low-power",
+        antialias: false,
+        powerPreference: "default",
       });
     } catch {
       container.style.background = backgroundColor;
@@ -369,13 +369,19 @@ export function Ferrofluid({
 
     const resize = () => {
       const rect = container.getBoundingClientRect();
-      // Cap internal resolution for huge screens
-      const maxCssW = Math.min(rect.width, 1600);
-      const maxCssH = Math.min(rect.height, 1000);
-      const scaleX = rect.width > 0 ? maxCssW / rect.width : 1;
-      const scaleY = rect.height > 0 ? maxCssH / rect.height : 1;
-      const s = Math.min(scaleX, scaleY, 1);
-      renderer.setSize(rect.width * s, rect.height * s);
+      let w = rect.width;
+      let h = rect.height;
+      // Parent may not have laid out yet — fall back to section / viewport
+      if (w < 2 || h < 2) {
+        const parent = container.parentElement?.getBoundingClientRect();
+        w = parent?.width || window.innerWidth;
+        h = parent?.height || Math.max(window.innerHeight * 0.92, 500);
+      }
+      // Cap internal resolution for performance
+      const maxW = 1400;
+      const maxH = 900;
+      const s = Math.min(1, maxW / w, maxH / h);
+      renderer.setSize(Math.max(w * s, 2), Math.max(h * s, 2));
       canvas.style.width = "100%";
       canvas.style.height = "100%";
       uniforms.iResolution.value = [
@@ -386,11 +392,13 @@ export function Ferrofluid({
     };
 
     resize();
+    // Second pass after layout
+    requestAnimationFrame(resize);
     const ro = new ResizeObserver(() => {
-      // Debounce resize via rAF
       requestAnimationFrame(resize);
     });
     ro.observe(container);
+    if (container.parentElement) ro.observe(container.parentElement);
 
     // Mouse on window — canvas is non-interactive so UI stays clickable
     let mouseRaf = 0;
