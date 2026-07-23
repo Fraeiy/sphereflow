@@ -15,11 +15,17 @@ export const COLORS = {
 export const SPHERE_WALLET_URL =
   process.env.NEXT_PUBLIC_SPHERE_WALLET_URL ?? "https://sphere.unicity.network";
 
-export const UCT_COIN_ID =
-  process.env.NEXT_PUBLIC_UCT_COIN_ID ?? "UCT";
+/**
+ * Optional override for UCT coin id (64-char lowercase hex).
+ * Prefer resolving from sphere_getAssets at runtime — SDK 0.12 rejects symbols.
+ */
+export const UCT_COIN_ID = process.env.NEXT_PUBLIC_UCT_COIN_ID ?? "";
 
 /** Sphere SDK default — UCT uses 18 decimal places on testnet2. */
 export const UCT_DECIMALS = 18;
+
+/** Connect / trust-base network id for testnet2 (SPHERE_NETWORKS.testnet2). */
+export const SPHERE_TESTNET2_NETWORK_ID = 4;
 
 export const DEFAULT_POLICY = {
   reserveBalance: 0,

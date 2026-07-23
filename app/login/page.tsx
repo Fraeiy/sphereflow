@@ -10,7 +10,7 @@ import { DepthCard } from "@/components/ui/depth-card";
 import { Logo } from "@/components/ui/logo";
 import { SceneOrb } from "@/components/ui/scene-orb";
 import { useTreasury } from "@/hooks/use-treasury";
-import { willAutoConnect } from "@/sphere/client";
+import { formatConnectError, willAutoConnect } from "@/sphere/client";
 import { toast } from "sonner";
 import { Magnet, SpotlightCard } from "@/components/react-bits";
 
@@ -49,9 +49,7 @@ export default function LoginPage() {
       toast.success("Sphere wallet connected");
       router.push("/dashboard");
     } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Failed to connect wallet"
-      );
+      toast.error(formatConnectError(error));
     }
   };
 
